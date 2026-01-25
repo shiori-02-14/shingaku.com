@@ -5,6 +5,8 @@ let chartInstances = {
   tier: null,
   trend: null,
 };
+const NO_DATA_MESSAGE = "データがないため、更新をお待ちください。";
+const EXTRA_YEAR_RANGE = 3;
 
 document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
@@ -107,32 +109,38 @@ async function loadDetail() {
 function renderDetail(school, year) {
   const yearData = getYearData(school, year);
   if (!yearData) {
-    renderNotFound("年度データがありません。");
+    renderNotFound("学校データを読み込めませんでした。");
     return;
   }
+  const isAvailable = yearData.isAvailable !== false;
   const yearLabel = formatYearLabel(yearData.year);
   const tiers = yearData.tiers ?? { S: 0, A: 0, B: 0, C: 0 };
   renderSchoolName(school);
   elements.scoreValue.textContent = formatScore(yearData.advScore);
-  elements.tierLine.textContent = `${yearLabel ? `${yearLabel} ` : ""}ランク内訳: S ${formatPercent(
-    tiers.S
-  )}% / A ${formatPercent(tiers.A)}% / B ${formatPercent(
-    tiers.B
-  )}% / C ${formatPercent(tiers.C)}%`;
+  if (isAvailable) {
+    elements.tierLine.textContent = `${yearLabel ? `${yearLabel} ` : ""}ランク内訳: S ${formatPercent(
+      tiers.S
+    )}% / A ${formatPercent(tiers.A)}% / B ${formatPercent(
+      tiers.B
+    )}% / C ${formatPercent(tiers.C)}%`;
+  } else {
+    const prefix = yearLabel ? `${yearLabel} ` : "";
+    elements.tierLine.textContent = `${prefix}${NO_DATA_MESSAGE}`;
+  }
   if (elements.yearSelect && yearData.year != null) {
     elements.yearSelect.value = String(yearData.year);
   }
 
   renderBadges(school);
   renderWebsite(school);
-  renderTierBar(tiers);
-  renderDestinations(yearData.destinations, yearLabel);
+  renderTierBar(isAvailable ? tiers : null);
+  renderDestinations(yearData.destinations, yearLabel, isAvailable);
   renderCharts(yearData, school);
 }
 
 function setupYearSelect(school, defaultYear) {
   if (!elements.yearSelect) return;
-  const years = getAvailableYears(school);
+  const years = getSelectableYears(school);
   elements.yearSelect.innerHTML = "";
   if (!years.length) {
     elements.yearSelect.disabled = true;
@@ -163,27 +171,64 @@ function getAvailableYears(school) {
   return Array.from(new Set(years)).sort((a, b) => b - a);
 }
 
+function getSelectableYears(school) {
+  const available = getAvailableYears(school);
+  const currentYear = new Date().getFullYear();
+  const baseCandidates = [...available];
+  if (Number.isFinite(currentYear)) {
+    baseCandidates.push(currentYear);
+  }
+  const baseYear = baseCandidates.length ? Math.max(...baseCandidates) : null;
+  const rangeYears = [];
+  if (Number.isFinite(baseYear)) {
+    for (let offset = 0; offset <= EXTRA_YEAR_RANGE; offset += 1) {
+      rangeYears.push(baseYear - offset);
+    }
+  }
+  return Array.from(new Set([...available, ...rangeYears]))
+    .filter((year) => Number.isFinite(year))
+    .sort((a, b) => b - a);
+}
+
 function getDefaultYear(school) {
   const years = getAvailableYears(school);
   if (years.length) return years[0];
-  return school?.latestYear ?? null;
+  const currentYear = new Date().getFullYear();
+  return Number.isFinite(currentYear) ? currentYear : school?.latestYear ?? null;
 }
 
 function getYearData(school, year) {
   if (!school) return null;
-  if (year != null && school.years?.length) {
+  const hasYears = Array.isArray(school.years) && school.years.length > 0;
+  if (year != null && hasYears) {
     const match = school.years.find(
       (item) => Number(item.year) === Number(year)
     );
-    if (match) return match;
+    if (match) {
+      return { ...match, isAvailable: true };
+    }
+    return buildMissingYearData(year);
   }
-  if (school.years?.length) return school.years[0];
+  if (hasYears) {
+    return { ...school.years[0], isAvailable: true };
+  }
+  const fallbackYear =
+    year != null
+      ? Number(year)
+      : Number.isFinite(school?.latestYear)
+      ? Number(school.latestYear)
+      : null;
+  return buildMissingYearData(fallbackYear);
+}
+
+function buildMissingYearData(year) {
   return {
-    year: school.latestYear ?? null,
-    tiers: school.tiers,
-    advScore: school.advScore,
-    destinations: school.destinations,
-    notes: school.notes,
+    year: Number.isFinite(year) ? Number(year) : null,
+    tiers: { S: 0, A: 0, B: 0, C: 0 },
+    advScore: null,
+    destinations: [],
+    notes: "",
+    isAvailable: false,
   };
 }
 
@@ -236,15 +281,20 @@ function renderWebsite(school) {
 function renderTierBar(tiers) {
   const spans = elements.tierBar.querySelectorAll("span");
   if (spans.length < 4) return;
-  spans[0].style.width = `${safeWidth(tiers.S)}%`;
-  spans[1].style.width = `${safeWidth(tiers.A)}%`;
-  spans[2].style.width = `${safeWidth(tiers.B)}%`;
-  spans[3].style.width = `${safeWidth(tiers.C)}%`;
+  const safeTiers = tiers ?? { S: 0, A: 0, B: 0, C: 0 };
+  spans[0].style.width = `${safeWidth(safeTiers.S)}%`;
+  spans[1].style.width = `${safeWidth(safeTiers.A)}%`;
+  spans[2].style.width = `${safeWidth(safeTiers.B)}%`;
+  spans[3].style.width = `${safeWidth(safeTiers.C)}%`;
 }
 
-function renderDestinations(destinations, yearLabel) {
+function renderDestinations(destinations, yearLabel, isAvailable = true) {
   elements.destinationsList.innerHTML = "";
   const prefix = yearLabel ? `${yearLabel} ` : "";
+  if (!isAvailable) {
+    elements.destinationsTotal.textContent = `${prefix}${NO_DATA_MESSAGE}`;
+    return;
+  }
   if (!destinations || !destinations.length) {
     elements.destinationsTotal.textContent = `${prefix}進学先データがありません。`;
     return;
@@ -316,13 +366,43 @@ function renderCharts(yearData, school) {
   if (typeof Chart === "undefined") {
     return;
   }
-  renderDestinationsChart(yearData.destinations);
-  renderTierChart(yearData.tiers);
+  const isAvailable = yearData?.isAvailable !== false;
+  if (isAvailable) {
+    renderDestinationsChart(yearData.destinations);
+    renderTierChart(yearData.tiers);
+  } else {
+    clearYearCharts();
+  }
   renderTrendChart(school);
 }
 
+function clearYearCharts() {
+  destroyChart("destinations");
+  destroyChart("tier");
+  clearCanvas(elements.destinationsChart);
+  clearCanvas(elements.tierChart);
+}
+
+function destroyChart(key) {
+  if (!chartInstances[key]) return;
+  chartInstances[key].destroy();
+  chartInstances[key] = null;
+}
+
+function clearCanvas(canvas) {
+  if (!canvas) return;
+  const context = canvas.getContext?.("2d");
+  if (!context) return;
+  context.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 function renderDestinationsChart(destinations) {
-  if (!elements.destinationsChart || !destinations || !destinations.length) {
+  if (!elements.destinationsChart) {
+    return;
+  }
+  if (!destinations || !destinations.length) {
+    destroyChart("destinations");
+    clearCanvas(elements.destinationsChart);
     return;
   }
 
@@ -382,7 +462,12 @@ function renderDestinationsChart(destinations) {
 }
 
 function renderTierChart(tiers) {
-  if (!elements.tierChart || !tiers) {
+  if (!elements.tierChart) {
+    return;
+  }
+  if (!tiers) {
+    destroyChart("tier");
+    clearCanvas(elements.tierChart);
     return;
   }
 
@@ -396,6 +481,12 @@ function renderTierChart(tiers) {
     { label: "B", value: tiers.B || 0, color: "#7fa3e5" },
     { label: "C", value: tiers.C || 0, color: "#c2d4f2" },
   ].filter((item) => item.value > 0);
+
+  if (!data.length) {
+    destroyChart("tier");
+    clearCanvas(elements.tierChart);
+    return;
+  }
 
   chartInstances.tier = new Chart(elements.tierChart, {
     type: "pie",

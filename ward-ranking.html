@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>区別ランキング | 進学偏差値.com</title>
+    <title>ランキング | 進学偏差値.com</title>
     <link rel="stylesheet" href="style.css" />
     <script src="data.js" defer></script>
     <script src="ward-ranking.js" defer></script>
@@ -17,9 +17,7 @@
         </a>
         <nav class="header-nav">
           <a class="nav-link" href="index.html">高校を探す</a>
-          <a class="nav-link is-active" href="ward-ranking.html"
-            >区別ランキング</a
-          >
+          <a class="nav-link is-active" href="ward-ranking.html">ランキング</a>
           <a class="nav-link" href="calculation.html">進学偏差値とは</a>
         </nav>
       </div>
@@ -28,10 +26,10 @@
     <main>
       <section class="hero">
         <div class="container hero-inner">
-          <p class="eyebrow">区別ランキング</p>
-          <h1>区内の進学偏差値を比較する</h1>
+          <p class="eyebrow">ランキング</p>
+          <h1>条件別に進学偏差値を比較する</h1>
           <p class="hero-lead">
-            区を選ぶと、その区内の学校が進学偏差値の高い順に並びます。
+            区・男女区分を選ぶと、条件に合う学校が進学偏差値の高い順に並びます。
           </p>
         </div>
       </section>
@@ -44,6 +42,15 @@
                 <span>区を選択</span>
                 <select id="wardSelect">
                   <option value="">選択してください</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>男女</span>
+                <select id="genderSelect">
+                  <option value="">すべて</option>
+                  <option value="共学">共学</option>
+                  <option value="男子校">男子校</option>
+                  <option value="女子校">女子校</option>
                 </select>
               </label>
             </div>

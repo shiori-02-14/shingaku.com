@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function cacheElements() {
   elements.wardSelect = document.getElementById("wardSelect");
+  elements.genderSelect = document.getElementById("genderSelect");
   elements.rankingCount = document.getElementById("rankingCount");
   elements.rankingList = document.getElementById("rankingList");
 }
@@ -53,6 +54,7 @@ function populateWardOptions() {
 
 function attachListeners() {
   elements.wardSelect.addEventListener("change", updateRanking);
+  elements.genderSelect.addEventListener("change", updateRanking);
 }
 
 async function loadSchools() {
@@ -66,6 +68,7 @@ async function loadSchools() {
 
 function updateRanking() {
   const ward = elements.wardSelect.value;
+  const gender = elements.genderSelect.value;
   if (!ward) {
     elements.rankingCount.textContent = "区を選択してください";
     renderMessage("区を選ぶとランキングが表示されます。");
@@ -74,9 +77,11 @@ function updateRanking() {
 
   const ranked = state.schools
     .filter((school) => school.ward === ward)
+    .filter((school) => (gender ? school.gender === gender : true))
     .sort((a, b) => compareScore(a, b));
 
-  elements.rankingCount.textContent = `${ward}の学校 ${ranked.length}件`;
+  const genderLabel = gender ? `・${gender}` : "";
+  elements.rankingCount.textContent = `${ward}${genderLabel}の学校 ${ranked.length}件`;
   renderRanking(ranked);
 }
 
