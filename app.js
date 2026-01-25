@@ -47,8 +47,8 @@ function bindLogoReload() {
       return;
     }
     event.preventDefault();
-    if (logoLink.dataset.reloading === "true") return;
-    logoLink.dataset.reloading = "true";
+    if (logoLink.dataset.navigating === "true") return;
+    logoLink.dataset.navigating = "true";
     logoLink.classList.add("is-reloading");
     document.body.classList.add("is-reloading");
     const reduceMotion =
@@ -56,7 +56,7 @@ function bindLogoReload() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const delay = reduceMotion ? 0 : 200;
     window.setTimeout(() => {
-      window.location.reload();
+      window.location.href = "index.html";
     }, delay);
   });
 }
@@ -159,8 +159,10 @@ function renderResults(items) {
 function createCard(school) {
   const card = document.createElement("article");
   card.className = "school-card";
-  const detailHref = school.slug
-    ? `schools/${encodeURIComponent(school.slug)}.html`
+  const detailHref = school.id
+    ? `school.html?id=${encodeURIComponent(school.id)}`
+    : school.slug
+    ? `school.html?slug=${encodeURIComponent(school.slug)}`
     : "";
   const destinationText = formatDestinationSummary(school.destinations);
   const isInComparison = state.comparisonList.some((s) => s.id === school.id);
@@ -203,7 +205,7 @@ function createCard(school) {
       )}%"></span>
     </div>
     <div class="destination">
-      <strong>進学先例:</strong> ${destinationText}
+      <strong>主な進学先:</strong> ${destinationText}
     </div>
     <div class="card-actions">
       ${

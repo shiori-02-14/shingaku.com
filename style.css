@@ -7,6 +7,9 @@ body {
   font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
   color: #1f2933;
   background: #f5f7fb;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-text-size-adjust: 100%;
 }
 
 a {
@@ -163,7 +166,7 @@ body.is-reloading main {
 }
 
 .hero-inner {
-  padding: 24px 0 28px;
+  padding: 24px 0 36px;
 }
 
 @media (min-width: 768px) {
@@ -210,7 +213,13 @@ h1 {
 }
 
 .search-panel {
-  margin-top: -20px;
+  margin-top: 12px;
+}
+
+@media (min-width: 768px) {
+  .search-panel {
+    margin-top: -20px;
+  }
 }
 
 .search-form {
@@ -324,21 +333,34 @@ h1 {
 }
 
 .results {
-  padding-bottom: 40px;
+  padding-bottom: 32px;
 }
 
 .results-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
   flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .results {
+    padding-bottom: 40px;
+  }
+
+  .results-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+  }
 }
 
 .results-count {
   margin: 4px 0 0;
-  color: #6b7a90;
-  font-size: 13px;
+  color: #52607a;
+  font-size: 14px;
 }
 
 .detail-card .results-count {
@@ -357,16 +379,31 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 12px;
+  font-size: 13px;
   color: #637189;
 }
 
 .sort-field select {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #d7deea;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 2px solid #d7deea;
   background: #fff;
-  font-size: 13px;
+  font-size: 16px;
+  min-height: 48px;
+}
+
+@media (min-width: 768px) {
+  .sort-field {
+    font-size: 12px;
+  }
+
+  .sort-field select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-width: 1px;
+    font-size: 13px;
+    min-height: auto;
+  }
 }
 
 .card-grid {
@@ -520,10 +557,16 @@ h1 {
 }
 
 .score-label {
-  font-size: 11px;
+  font-size: 12px;
   color: #6b7a90;
   margin-top: 2px;
   letter-spacing: 0.3px;
+}
+
+@media (min-width: 768px) {
+  .score-label {
+    font-size: 11px;
+  }
 }
 
 .badge-row {
@@ -597,7 +640,7 @@ h1 {
 }
 
 .destination {
-  font-size: 13px;
+  font-size: 14px;
   color: #42506b;
   line-height: 1.7;
   padding: 12px 14px;
@@ -605,6 +648,12 @@ h1 {
   border-radius: 8px;
   border-left: 3px solid #c2d4f2;
   word-break: break-word;
+}
+
+@media (min-width: 768px) {
+  .destination {
+    font-size: 13px;
+  }
 }
 
 .destination strong {
@@ -665,6 +714,124 @@ h1 {
   margin-bottom: 0;
 }
 
+.primary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #1b4f9c;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.primary-link:active {
+  transform: scale(0.98);
+  background: #163f7c;
+}
+
+@media (min-width: 768px) {
+  .primary-link {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .primary-link:hover {
+    background: #163f7c;
+  }
+
+  .primary-link:active {
+    transform: none;
+  }
+}
+
+.calc-section {
+  background: #ffffff;
+  padding: 32px 0 40px;
+}
+
+.calc-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 900px) {
+  .calc-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+}
+
+.calc-card {
+  background: #ffffff;
+  border: 1px solid #e4e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(31, 41, 51, 0.06);
+}
+
+.calc-card h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2933;
+}
+
+.calc-card p {
+  margin: 0 0 12px;
+  color: #42506b;
+  line-height: 1.7;
+}
+
+.calc-card p:last-child {
+  margin-bottom: 0;
+}
+
+.calc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.calc-table th,
+.calc-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e4e8f0;
+  text-align: left;
+}
+
+.calc-table th {
+  background: #f7f9fc;
+  color: #42506b;
+  font-weight: 600;
+}
+
+.calc-steps {
+  padding-left: 18px;
+  margin: 0;
+  color: #42506b;
+}
+
+.calc-steps li {
+  margin-bottom: 8px;
+}
+
+.calc-note {
+  font-size: 12px;
+  color: #6b7a90;
+  background: #f7f9fc;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border-left: 3px solid #c2d4f2;
+}
+
 .about-card ul {
   padding-left: 18px;
   margin: 12px 0 0;
@@ -689,9 +856,25 @@ h1 {
 
 .footer-inner {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.footer-credit {
+  font-size: 12px;
+  color: #6b7a90;
+}
+
+@media (min-width: 768px) {
+  .footer-inner {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align: left;
+    gap: 12px;
+  }
 }
 
 .ranking-header {
@@ -778,12 +961,36 @@ h1 {
   letter-spacing: -0.01em;
 }
 
+.school-name-link {
+  color: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.school-name-link:active {
+  background-color: #eef2fb;
+}
+
 @media (min-width: 768px) {
   .detail-hero h1 {
     font-size: 32px;
     margin: 0 0 20px;
     line-height: 1.3;
     letter-spacing: -0.02em;
+  }
+
+  .school-name-link:hover {
+    color: #1b4f9c;
+  }
+
+  .school-name-link:active {
+    background-color: transparent;
   }
 }
 
@@ -1141,15 +1348,16 @@ h1 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  margin-left: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  margin-left: 4px;
   background: #1b4f9c;
   color: #ffffff;
-  border-radius: 10px;
-  font-size: 11px;
+  border-radius: 999px;
+  font-size: 10px;
   font-weight: 600;
+  line-height: 1;
 }
 
 .card-actions {

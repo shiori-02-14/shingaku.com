@@ -12,6 +12,36 @@ document.addEventListener("DOMContentLoaded", () => {
   loadDetail();
 });
 
+function getSchoolIdentifier() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id") || params.get("schoolId");
+  const slug = params.get("slug");
+  const bodyId = document.body?.dataset?.schoolId;
+  return { id, slug, bodyId };
+}
+
+function findSchoolByIdentifier(schools, { id, slug, bodyId }) {
+  if (!schools || !schools.length) return null;
+  const idValue = String(id || bodyId || "").trim();
+  const slugValue = String(slug || "").trim();
+
+  if (idValue) {
+    const matchById = schools.find((item) => String(item.id) === idValue);
+    if (matchById) return matchById;
+  }
+
+  if (slugValue) {
+    const matchBySlug = schools.find((item) => String(item.slug) === slugValue);
+    if (matchBySlug) return matchBySlug;
+  }
+
+  if (idValue) {
+    return schools.find((item) => String(item.slug) === idValue) ?? null;
+  }
+
+  return null;
+}
+
 function cacheElements() {
   elements.name = document.getElementById("schoolName");
   elements.badges = document.getElementById("schoolBadges");
@@ -37,8 +67,8 @@ function bindLogoReload() {
       return;
     }
     event.preventDefault();
-    if (logoLink.dataset.reloading === "true") return;
-    logoLink.dataset.reloading = "true";
+    if (logoLink.dataset.navigating === "true") return;
+    logoLink.dataset.navigating = "true";
     logoLink.classList.add("is-reloading");
     document.body.classList.add("is-reloading");
     const reduceMotion =
@@ -46,21 +76,21 @@ function bindLogoReload() {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const delay = reduceMotion ? 0 : 200;
     window.setTimeout(() => {
-      window.location.reload();
+      window.location.href = "index.html";
     }, delay);
   });
 }
 
 async function loadDetail() {
-  const schoolId = document.body.dataset.schoolId;
-  if (!schoolId) {
-    renderNotFound("学校IDが指定されていません。");
+  const identifier = getSchoolIdentifier();
+  if (!identifier.id && !identifier.slug && !identifier.bodyId) {
+    renderNotFound("学校が指定されていません。");
     return;
   }
 
   try {
     const schools = await SchoolData.loadSchools();
-    const school = schools.find((item) => String(item.id) === schoolId);
+    const school = findSchoolByIdentifier(schools, identifier);
     if (!school) {
       renderNotFound("該当する学校が見つかりませんでした。");
       return;
@@ -82,7 +112,7 @@ function renderDetail(school, year) {
   }
   const yearLabel = formatYearLabel(yearData.year);
   const tiers = yearData.tiers ?? { S: 0, A: 0, B: 0, C: 0 };
-  elements.name.textContent = school.name;
+  renderSchoolName(school);
   elements.scoreValue.textContent = formatScore(yearData.advScore);
   elements.tierLine.textContent = `${yearLabel ? `${yearLabel} ` : ""}ランク内訳: S ${formatPercent(
     tiers.S
@@ -166,6 +196,23 @@ function renderBadges(school) {
     span.textContent = text;
     elements.badges.appendChild(span);
   });
+}
+
+function renderSchoolName(school) {
+  if (!elements.name) return;
+  elements.name.innerHTML = "";
+  const nameText = school?.name ?? "";
+  if (school?.websiteUrl) {
+    const link = document.createElement("a");
+    link.className = "school-name-link";
+    link.href = school.websiteUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = nameText;
+    elements.name.appendChild(link);
+    return;
+  }
+  elements.name.textContent = nameText;
 }
 
 function renderWebsite(school) {

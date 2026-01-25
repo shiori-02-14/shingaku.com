@@ -4,22 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>学校詳細 | 進学偏差値.com</title>
-    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="../data.js" defer></script>
-    <script src="../detail.js" defer></script>
+    <script src="data.js" defer></script>
+    <script src="detail.js" defer></script>
   </head>
-  <body data-school-id="13">
+  <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="logo" href="" aria-label="ページを更新する">
+        <a class="logo" href="index.html" aria-label="トップページへ">
           <span class="logo-mark">進学偏差値.com</span>
           <span class="logo-sub">東京23区 高校情報</span>
         </a>
         <nav class="header-nav">
-          <a class="nav-link" href="../index.html">高校を探す</a>
-          <a class="nav-link" href="../ward-ranking.html">区別ランキング</a>
-          <a class="nav-link" href="../index.html#about">進学偏差値とは</a>
+          <a class="nav-link" href="index.html">高校を探す</a>
+          <a class="nav-link" href="ward-ranking.html">区別ランキング</a>
+          <a class="nav-link" href="calculation.html">進学偏差値とは</a>
         </nav>
       </div>
     </header>
@@ -27,7 +27,7 @@
     <main id="detailRoot">
       <section class="detail-hero">
         <div class="container">
-          <a class="back-link" href="../index.html">← 一覧に戻る</a>
+          <a class="back-link" href="index.html">← 一覧に戻る</a>
           <div class="detail-header">
             <div>
               <p class="eyebrow">学校詳細</p>
@@ -81,7 +81,11 @@
               <canvas id="tierChart"></canvas>
             </div>
           </div>
-          <div class="detail-card chart-full-width" id="trendCard" style="display: none;">
+          <div
+            class="detail-card chart-full-width"
+            id="trendCard"
+            style="display: none;"
+          >
             <h2>年度別トレンド</h2>
             <div class="chart-container">
               <canvas id="trendChart"></canvas>
@@ -95,6 +99,7 @@
       <div class="container footer-inner">
         <p>進学偏差値.com（MVP）</p>
         <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+        <p class="footer-credit">© 2026 しおり 🔖</p>
       </div>
     </footer>
   </body>

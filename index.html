@@ -12,7 +12,7 @@
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="logo" href="" aria-label="ページを更新する" title="クリックで更新">
+        <a class="logo" href="index.html" aria-label="トップページへ" title="トップへ">
           <span class="logo-mark">進学偏差値.com</span>
           <span class="logo-sub">東京23区 高校情報</span>
         </a>
@@ -23,7 +23,7 @@
             比較
             <span class="comparison-badge" id="comparisonBadge" style="display: none;"></span>
           </a>
-          <a class="nav-link" href="#about">進学偏差値とは</a>
+          <a class="nav-link" href="calculation.html">進学偏差値とは</a>
         </nav>
       </div>
     </header>
@@ -31,7 +31,6 @@
     <main>
       <section class="hero">
         <div class="container hero-inner">
-          <p class="eyebrow">東京都23区スタートアップ</p>
           <h1>進学先で見る、高校選び。</h1>
           <p class="hero-lead">
             進学偏差値は、進学先のランク分布から簡易算出した指標です。単純な偏差値に
@@ -113,14 +112,11 @@
       <section class="about" id="about">
         <div class="container about-inner">
           <div class="about-card calculation-card">
-            <h2>進学偏差値の算出</h2>
+            <h2>算出基準・計算方式</h2>
             <p>
-              進学先のランク分布に重みを付けて算出した簡易スコアです。MVPでは
-              <strong>S=80 / A=70 / B=60 / C=50</strong> の重みを使っています。
+              進学偏差値の算出方法やランク分類の考え方をまとめています。詳しい内容は専用ページで確認できます。
             </p>
-            <p class="formula">
-              進学偏差値 = Σ(比率 × 重み) / Σ(比率)
-            </p>
+            <a class="primary-link" href="calculation.html">算出基準のページへ →</a>
           </div>
           <div class="about-card">
             <h3>このMVPでできること</h3>
@@ -140,6 +136,7 @@
       <div class="container footer-inner">
         <p>進学偏差値.com（MVP）</p>
         <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+        <p class="footer-credit">© 2026 しおり 🔖</p>
       </div>
     </footer>
   </body>

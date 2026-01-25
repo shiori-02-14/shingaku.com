@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>算出基準・計算方式 | 進学偏差値.com</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="logo" href="index.html" aria-label="トップページへ" title="トップへ">
+          <span class="logo-mark">進学偏差値.com</span>
+          <span class="logo-sub">東京23区 高校情報</span>
+        </a>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html">高校を探す</a>
+          <a class="nav-link" href="ward-ranking.html">区別ランキング</a>
+          <a class="nav-link" href="comparison.html">比較</a>
+          <a class="nav-link is-active" href="calculation.html">進学偏差値とは</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <p class="eyebrow">進学偏差値とは</p>
+          <h1>算出基準・計算方式</h1>
+          <p class="hero-lead">
+            進学偏差値は、進学先のランク分布に重みを付けて算出した簡易スコアです。進学先の
+            質を比較しやすくするための指標として活用しています。
+          </p>
+        </div>
+      </section>
+
+      <section class="calc-section">
+        <div class="container calc-grid">
+          <article class="calc-card">
+            <h2>算出の考え方</h2>
+            <p>
+              進学先の大学をランク（S/A/B/C）に分類し、人数比率に重みを掛けて加重平均します。
+              進学先の分布が高ランク寄りほどスコアが高くなります。
+            </p>
+            <p class="formula">進学偏差値 = Σ(比率 × 重み) / Σ(比率)</p>
+          </article>
+
+          <article class="calc-card">
+            <h2>ランク分類の基準</h2>
+            <p>
+              大学名はあらかじめ定義したグループに分類します。別名表記は別名辞書で統一し、
+              未定義の大学はランクCとして扱います。
+            </p>
+            <p class="calc-note">
+              例: 「東京大」などの略称は正式名称に変換されます。
+            </p>
+          </article>
+
+          <article class="calc-card">
+            <h2>重み付け</h2>
+            <table class="calc-table">
+              <thead>
+                <tr>
+                  <th>ランク</th>
+                  <th>重み</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>S</td>
+                  <td>80</td>
+                </tr>
+                <tr>
+                  <td>A</td>
+                  <td>70</td>
+                </tr>
+                <tr>
+                  <td>B</td>
+                  <td>60</td>
+                </tr>
+                <tr>
+                  <td>C</td>
+                  <td>50</td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article class="calc-card">
+            <h2>計算ステップ</h2>
+            <ol class="calc-steps">
+              <li>進学先データがある場合、大学名をランク分類します。</li>
+              <li>ランク別の人数比率（%）を算出します。</li>
+              <li>比率に重みを掛けて加重平均を計算します。</li>
+              <li>小数第1位で丸めて表示します。</li>
+            </ol>
+            <p class="calc-note">
+              進学先データがない場合は、CSVのtier_s〜tier_cを使用します。
+            </p>
+          </article>
+
+          <article class="calc-card">
+            <h2>年度データの扱い</h2>
+            <p>
+              学校ごとに複数年度のデータがある場合、最新年度を初期表示します。年度切替で
+              進学偏差値と分布を切り替えて比較できます。
+            </p>
+          </article>
+
+          <article class="calc-card">
+            <h2>注意点</h2>
+            <p>
+              進学偏差値は進学先の分布に基づく簡易指標です。実際の進学実績を補助的に可視化
+              することを目的としています。
+            </p>
+            <p class="calc-note">
+              進学先人数が0の場合はスコアを表示しません（「-」表示）。
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>進学偏差値.com（MVP）</p>
+        <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+        <p class="footer-credit">© 2026 しおり 🔖</p>
+      </div>
+    </footer>
+  </body>
+</html>
