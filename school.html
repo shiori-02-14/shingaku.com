@@ -17,8 +17,10 @@
           <span class="logo-sub">東京23区 高校情報</span>
         </a>
         <nav class="header-nav">
-          <a class="nav-link" href="index.html">高校を探す</a>
+          <a class="nav-link" href="index.html">トップページ</a>
+          <a class="nav-link is-active" href="index.html#search">学校検索</a>
           <a class="nav-link" href="ward-ranking.html">ランキング</a>
+          <a class="nav-link" href="comparison.html">学校比較</a>
           <a class="nav-link" href="calculation.html">進学偏差値とは</a>
         </nav>
       </div>
@@ -39,16 +41,6 @@
                   <select id="yearSelect"></select>
                 </label>
               </div>
-              <div class="detail-links">
-                <a
-                  id="schoolWebsite"
-                  class="detail-link school-website"
-                  href=""
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  >学校公式サイト</a
-                >
-              </div>
             </div>
             <div class="detail-score">
               <div class="score-value" id="scoreValue">-</div>
@@ -68,16 +60,41 @@
       <section class="detail-body">
         <div class="container detail-grid">
           <div class="detail-card">
-            <h2>進学先（人数）</h2>
+            <h2>合格実績（合格者数）</h2>
             <p class="results-count" id="destinationsTotal"></p>
-            <ul class="destination-list" id="destinationsList"></ul>
-            <div
-              class="destination-section destination-overseas"
-              id="destinationsOverseasSection"
-              style="display: none;"
-            >
-              <p class="destination-section-title">海外大学</p>
-              <ul class="destination-list" id="destinationsOverseasList"></ul>
+            <div class="destination-sections">
+              <div
+                class="destination-section destination-public"
+                id="destinationsPublicSection"
+                style="display: none;"
+              >
+                <p class="destination-section-title">国公立大学</p>
+                <ul class="destination-list" id="destinationsPublicList"></ul>
+              </div>
+              <div
+                class="destination-section destination-private"
+                id="destinationsPrivateSection"
+                style="display: none;"
+              >
+                <p class="destination-section-title">私立大学</p>
+                <ul class="destination-list" id="destinationsPrivateList"></ul>
+              </div>
+              <div
+                class="destination-section destination-medical"
+                id="destinationsMedicalSection"
+                style="display: none;"
+              >
+                <p class="destination-section-title">医学部</p>
+                <ul class="destination-list" id="destinationsMedicalList"></ul>
+              </div>
+              <div
+                class="destination-section destination-overseas"
+                id="destinationsOverseasSection"
+                style="display: none;"
+              >
+                <p class="destination-section-title">海外大学</p>
+                <ul class="destination-list" id="destinationsOverseasList"></ul>
+              </div>
             </div>
             <div class="chart-container">
               <canvas id="destinationsChart"></canvas>

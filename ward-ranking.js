@@ -102,9 +102,7 @@ function renderRanking(items) {
 function createRankCard(school, rank) {
   const card = document.createElement("article");
   card.className = "rank-card";
-  const detailHref = school.id
-    ? `school.html?id=${encodeURIComponent(school.id)}`
-    : school.slug
+  const detailHref = school.slug
     ? `school.html?slug=${encodeURIComponent(school.slug)}`
     : "";
 

@@ -16,45 +16,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function getSchoolIdentifier() {
   const params = new URLSearchParams(window.location.search);
-  const id = params.get("id") || params.get("schoolId");
-  const slug = params.get("slug");
-  const bodyId = document.body?.dataset?.schoolId;
-  return { id, slug, bodyId };
+  const slug = params.get("slug") || params.get("id") || params.get("schoolId");
+  const bodySlug = document.body?.dataset?.schoolSlug;
+  return { slug, bodySlug };
 }
 
-function findSchoolByIdentifier(schools, { id, slug, bodyId }) {
+function findSchoolByIdentifier(schools, { slug, bodySlug }) {
   if (!schools || !schools.length) return null;
-  const idValue = String(id || bodyId || "").trim();
-  const slugValue = String(slug || "").trim();
-
-  if (idValue) {
-    const matchById = schools.find((item) => String(item.id) === idValue);
-    if (matchById) return matchById;
-  }
-
-  if (slugValue) {
-    const matchBySlug = schools.find((item) => String(item.slug) === slugValue);
-    if (matchBySlug) return matchBySlug;
-  }
-
-  if (idValue) {
-    return schools.find((item) => String(item.slug) === idValue) ?? null;
-  }
-
-  return null;
+  const slugValue = String(slug || bodySlug || "").trim();
+  if (!slugValue) return null;
+  return schools.find((item) => String(item.slug) === slugValue) ?? null;
 }
 
 function cacheElements() {
   elements.name = document.getElementById("schoolName");
   elements.badges = document.getElementById("schoolBadges");
   elements.yearSelect = document.getElementById("yearSelect");
-  elements.website = document.getElementById("schoolWebsite");
   elements.scoreValue = document.getElementById("scoreValue");
   elements.tierLine = document.getElementById("tierLine");
   elements.tierBar = document.getElementById("tierBar");
-  elements.destinationsList = document.getElementById("destinationsList");
+  elements.destinationsPublicSection = document.getElementById(
+    "destinationsPublicSection"
+  );
+  elements.destinationsPublicTitle = document.querySelector(
+    "#destinationsPublicSection .destination-section-title"
+  );
+  elements.destinationsPublicList = document.getElementById(
+    "destinationsPublicList"
+  );
+  elements.destinationsPrivateSection = document.getElementById(
+    "destinationsPrivateSection"
+  );
+  elements.destinationsPrivateTitle = document.querySelector(
+    "#destinationsPrivateSection .destination-section-title"
+  );
+  elements.destinationsPrivateList = document.getElementById(
+    "destinationsPrivateList"
+  );
+  elements.destinationsMedicalSection = document.getElementById(
+    "destinationsMedicalSection"
+  );
+  elements.destinationsMedicalTitle = document.querySelector(
+    "#destinationsMedicalSection .destination-section-title"
+  );
+  elements.destinationsMedicalList = document.getElementById(
+    "destinationsMedicalList"
+  );
   elements.destinationsOverseasSection = document.getElementById(
     "destinationsOverseasSection"
+  );
+  elements.destinationsOverseasTitle = document.querySelector(
+    "#destinationsOverseasSection .destination-section-title"
   );
   elements.destinationsOverseasList = document.getElementById(
     "destinationsOverseasList"
@@ -91,7 +103,7 @@ function bindLogoReload() {
 
 async function loadDetail() {
   const identifier = getSchoolIdentifier();
-  if (!identifier.id && !identifier.slug && !identifier.bodyId) {
+  if (!identifier.slug && !identifier.bodySlug) {
     renderNotFound("学校が指定されていません。");
     return;
   }
@@ -138,7 +150,6 @@ function renderDetail(school, year) {
   }
 
   renderBadges(school);
-  renderWebsite(school);
   renderTierBar(isAvailable ? tiers : null);
   renderDestinations(yearData.destinations, yearLabel, isAvailable);
   renderCharts(yearData, school);
@@ -266,24 +277,6 @@ function renderSchoolName(school) {
   elements.name.textContent = nameText;
 }
 
-function renderWebsite(school) {
-  if (!elements.website) return;
-  const container = elements.website.parentElement;
-  if (!school?.websiteUrl) {
-    elements.website.style.display = "none";
-    elements.website.removeAttribute("href");
-    if (container) {
-      container.style.display = "none";
-    }
-    return;
-  }
-  if (container) {
-    container.style.display = "";
-  }
-  elements.website.style.display = "";
-  elements.website.href = school.websiteUrl;
-}
-
 function renderTierBar(tiers) {
   const spans = elements.tierBar.querySelectorAll("span");
   if (spans.length < 4) return;
@@ -295,9 +288,26 @@ function renderTierBar(tiers) {
 }
 
 function renderDestinations(destinations, yearLabel, isAvailable = true) {
-  elements.destinationsList.innerHTML = "";
+  if (elements.destinationsPublicList) {
+    elements.destinationsPublicList.innerHTML = "";
+  }
+  if (elements.destinationsPrivateList) {
+    elements.destinationsPrivateList.innerHTML = "";
+  }
+  if (elements.destinationsMedicalList) {
+    elements.destinationsMedicalList.innerHTML = "";
+  }
   if (elements.destinationsOverseasList) {
     elements.destinationsOverseasList.innerHTML = "";
+  }
+  if (elements.destinationsPublicSection) {
+    elements.destinationsPublicSection.style.display = "none";
+  }
+  if (elements.destinationsPrivateSection) {
+    elements.destinationsPrivateSection.style.display = "none";
+  }
+  if (elements.destinationsMedicalSection) {
+    elements.destinationsMedicalSection.style.display = "none";
   }
   if (elements.destinationsOverseasSection) {
     elements.destinationsOverseasSection.style.display = "none";
@@ -308,32 +318,133 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
     return;
   }
   if (!destinations || !destinations.length) {
-    elements.destinationsTotal.textContent = `${prefix}進学先データがありません。`;
+    elements.destinationsTotal.textContent = `${prefix}合格実績データがありません。`;
     return;
   }
 
-  const domestic = destinations.filter((item) => !item.isOverseas);
-  const overseas = destinations.filter((item) => item.isOverseas);
-  const domesticTotal = domestic.reduce((sum, item) => sum + item.count, 0);
-  const overseasTotal = overseas.reduce((sum, item) => sum + item.count, 0);
-  const total = domesticTotal + overseasTotal;
-  const overseasNote = overseasTotal ? `（海外 ${overseasTotal}名）` : "";
-  elements.destinationsTotal.textContent = `${prefix}合計 ${total}名${overseasNote}`;
+  const categorized = destinations.reduce(
+    (acc, item) => {
+      const category = getDestinationCategory(item);
+      if (category === "overseas") {
+        acc.overseas.push(item);
+      } else if (category === "public") {
+        acc.public.push(item);
+      } else if (category === "medical") {
+        acc.medical.push(item);
+      } else {
+        acc.private.push(item);
+      }
+      return acc;
+    },
+    { public: [], private: [], medical: [], overseas: [] }
+  );
 
-  renderDestinationList(domestic, domesticTotal, elements.destinationsList);
+  const publicTotal = categorized.public.reduce(
+    (sum, item) => sum + item.count,
+    0
+  );
+  const privateTotal = categorized.private.reduce(
+    (sum, item) => sum + item.count,
+    0
+  );
+  const medicalTotal = categorized.medical.reduce(
+    (sum, item) => sum + item.count,
+    0
+  );
+  const overseasTotal = categorized.overseas.reduce(
+    (sum, item) => sum + item.count,
+    0
+  );
+  const total = publicTotal + privateTotal + medicalTotal + overseasTotal;
+  const breakdown = [
+    publicTotal ? `国公立 ${publicTotal}名` : "",
+    privateTotal ? `私立 ${privateTotal}名` : "",
+    medicalTotal ? `医学部 ${medicalTotal}名` : "",
+    overseasTotal ? `海外 ${overseasTotal}名` : "",
+  ]
+    .filter(Boolean)
+    .join(" / ");
+  const breakdownText = breakdown ? `（${breakdown}）` : "";
+  elements.destinationsTotal.textContent = `${prefix}合計 ${total}名${breakdownText}`;
+
+  updateDestinationTitle(
+    elements.destinationsPublicTitle,
+    "国公立大学",
+    publicTotal
+  );
+  updateDestinationTitle(
+    elements.destinationsPrivateTitle,
+    "私立大学",
+    privateTotal
+  );
+  updateDestinationTitle(
+    elements.destinationsMedicalTitle,
+    "医学部",
+    medicalTotal
+  );
+  updateDestinationTitle(
+    elements.destinationsOverseasTitle,
+    "海外大学",
+    overseasTotal
+  );
 
   if (
-    overseas.length &&
+    categorized.public.length &&
+    elements.destinationsPublicSection &&
+    elements.destinationsPublicList
+  ) {
+    elements.destinationsPublicSection.style.display = "";
+    renderDestinationList(
+      categorized.public,
+      publicTotal,
+      elements.destinationsPublicList
+    );
+  }
+
+  if (
+    categorized.private.length &&
+    elements.destinationsPrivateSection &&
+    elements.destinationsPrivateList
+  ) {
+    elements.destinationsPrivateSection.style.display = "";
+    renderDestinationList(
+      categorized.private,
+      privateTotal,
+      elements.destinationsPrivateList
+    );
+  }
+
+  if (
+    categorized.medical.length &&
+    elements.destinationsMedicalSection &&
+    elements.destinationsMedicalList
+  ) {
+    elements.destinationsMedicalSection.style.display = "";
+    renderDestinationList(
+      categorized.medical,
+      medicalTotal,
+      elements.destinationsMedicalList
+    );
+  }
+
+  if (
+    categorized.overseas.length &&
     elements.destinationsOverseasSection &&
     elements.destinationsOverseasList
   ) {
     elements.destinationsOverseasSection.style.display = "";
     renderDestinationList(
-      overseas,
+      categorized.overseas,
       overseasTotal,
       elements.destinationsOverseasList
     );
   }
+}
+
+function updateDestinationTitle(target, label, total) {
+  if (!target) return;
+  const suffix = total ? `（${total}名）` : "";
+  target.textContent = `${label}${suffix}`;
 }
 
 function renderDestinationList(items, total, target) {
@@ -350,6 +461,31 @@ function renderDestinationList(items, total, target) {
     fragment.appendChild(li);
   });
   target.appendChild(fragment);
+}
+
+function getDestinationCategory(item) {
+  if (!item) return "private";
+  const normalizedCategory = normalizeDestinationCategory(item.category);
+  if (normalizedCategory === "overseas") return "overseas";
+  if (normalizedCategory === "medical") return "medical";
+  if (item.isOverseas) return "overseas";
+  if (isMedicalDestinationName(item.name)) return "medical";
+  if (normalizedCategory) return normalizedCategory;
+  return "private";
+}
+
+function normalizeDestinationCategory(value) {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (!normalized) return null;
+  if (/(海外|overseas)/u.test(normalized)) return "overseas";
+  if (/(医学部|medical)/u.test(normalized)) return "medical";
+  if (/(国公立|国立|公立|public)/u.test(normalized)) return "public";
+  if (/(私立|private)/u.test(normalized)) return "private";
+  return null;
+}
+
+function isMedicalDestinationName(name) {
+  return /(医学部|医科大学)/u.test(String(name || "").trim());
 }
 
 function renderNotFound(message) {
@@ -435,7 +571,8 @@ function renderDestinationsChart(destinations) {
   if (!elements.destinationsChart) {
     return;
   }
-  const filtered = destinations?.filter((item) => !item.isOverseas) ?? [];
+  const filtered =
+    destinations?.filter((item) => item.category !== "overseas") ?? [];
   if (!filtered.length) {
     destroyChart("destinations");
     clearCanvas(elements.destinationsChart);
@@ -459,7 +596,7 @@ function renderDestinationsChart(destinations) {
       labels: labels,
       datasets: [
         {
-          label: "進学者数",
+          label: "合格者数",
           data: data,
           backgroundColor: "#4a7bd1",
           borderColor: "#1b4f9c",

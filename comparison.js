@@ -59,8 +59,8 @@ function loadComparisonList() {
   try {
     const data = localStorage.getItem("comparisonList");
     if (!data) return;
-    const ids = JSON.parse(data);
-    state.comparisonList = state.schools.filter((s) => ids.includes(s.id));
+    const slugs = JSON.parse(data);
+    state.comparisonList = state.schools.filter((s) => slugs.includes(s.slug));
   } catch (e) {
     console.error("Failed to load comparison list", e);
   }
@@ -140,9 +140,7 @@ function renderComparison() {
           ${state.comparisonList
             .map(
               (school) => {
-                const detailHref = school.id
-                  ? `school.html?id=${encodeURIComponent(school.id)}`
-                  : school.slug
+                const detailHref = school.slug
                   ? `school.html?slug=${encodeURIComponent(school.slug)}`
                   : "";
                 return `

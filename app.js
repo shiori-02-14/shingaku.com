@@ -120,13 +120,20 @@ function updateResults() {
   renderResults(filtered);
 }
 
+const nameCollator = new Intl.Collator("ja", {
+  usage: "sort",
+  sensitivity: "base",
+  numeric: true,
+  ignorePunctuation: true,
+});
+
 function sortSchools(list, sortMode) {
   const sorted = [...list];
   switch (sortMode) {
     case "adv-asc":
       return sorted.sort((a, b) => compareScore(a, b, "asc"));
     case "name-asc":
-      return sorted.sort((a, b) => a.name.localeCompare(b.name, "ja"));
+      return sorted.sort((a, b) => compareName(a, b));
     case "adv-desc":
     default:
       return sorted.sort((a, b) => compareScore(a, b, "desc"));
@@ -137,6 +144,12 @@ function compareScore(a, b, direction) {
   const scoreA = a.advScore ?? -Infinity;
   const scoreB = b.advScore ?? -Infinity;
   return direction === "asc" ? scoreA - scoreB : scoreB - scoreA;
+}
+
+function compareName(a, b) {
+  const nameA = a?.name ?? "";
+  const nameB = b?.name ?? "";
+  return nameCollator.compare(nameA, nameB);
 }
 
 function renderResults(items) {
@@ -159,13 +172,11 @@ function renderResults(items) {
 function createCard(school) {
   const card = document.createElement("article");
   card.className = "school-card";
-  const detailHref = school.id
-    ? `school.html?id=${encodeURIComponent(school.id)}`
-    : school.slug
+  const detailHref = school.slug
     ? `school.html?slug=${encodeURIComponent(school.slug)}`
     : "";
   const destinationText = formatDestinationSummary(school.destinations);
-  const isInComparison = state.comparisonList.some((s) => s.id === school.id);
+  const isInComparison = state.comparisonList.some((s) => s.slug === school.slug);
   const maxComparison = 5;
 
   card.innerHTML = `
@@ -205,7 +216,8 @@ function createCard(school) {
       )}%"></span>
     </div>
     <div class="destination">
-      <strong>主な進学先:</strong> ${destinationText}
+      <strong>主な合格先</strong>
+      <span class="destination-summary">${destinationText}</span>
     </div>
     <div class="card-actions">
       ${
@@ -215,7 +227,7 @@ function createCard(school) {
       }
       <button 
         class="comparison-button ${isInComparison ? "is-active" : ""}" 
-        data-school-id="${school.id}"
+        data-school-slug="${school.slug || ""}"
         ${isInComparison ? "" : state.comparisonList.length >= maxComparison ? "disabled" : ""}
         title="${isInComparison ? "比較から削除" : state.comparisonList.length >= maxComparison ? `比較は最大${maxComparison}校まで` : "比較に追加"}"
       >
@@ -236,7 +248,7 @@ function createCard(school) {
 }
 
 function toggleComparison(school) {
-  const index = state.comparisonList.findIndex((s) => s.id === school.id);
+  const index = state.comparisonList.findIndex((s) => s.slug === school.slug);
   if (index >= 0) {
     state.comparisonList.splice(index, 1);
   } else {
@@ -252,7 +264,7 @@ function toggleComparison(school) {
 
 function saveComparisonList() {
   try {
-    const data = state.comparisonList.map((s) => s.id);
+    const data = state.comparisonList.map((s) => s.slug);
     localStorage.setItem("comparisonList", JSON.stringify(data));
   } catch (e) {
     console.error("Failed to save comparison list", e);
@@ -263,8 +275,8 @@ function loadComparisonList() {
   try {
     const data = localStorage.getItem("comparisonList");
     if (!data) return;
-    const ids = JSON.parse(data);
-    state.comparisonList = state.schools.filter((s) => ids.includes(s.id));
+    const slugs = JSON.parse(data);
+    state.comparisonList = state.schools.filter((s) => slugs.includes(s.slug));
   } catch (e) {
     console.error("Failed to load comparison list", e);
   }

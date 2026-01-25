@@ -14,7 +14,8 @@
           <span class="logo-sub">東京23区 高校情報</span>
         </a>
         <nav class="header-nav">
-          <a class="nav-link" href="index.html">高校を探す</a>
+          <a class="nav-link" href="index.html">トップページ</a>
+          <a class="nav-link" href="index.html#search">学校検索</a>
           <a class="nav-link" href="ward-ranking.html">ランキング</a>
           <a class="nav-link" href="comparison.html">学校比較</a>
           <a class="nav-link is-active" href="calculation.html">進学偏差値とは</a>
@@ -28,8 +29,8 @@
           <p class="eyebrow">進学偏差値とは</p>
           <h1>算出基準・計算方式</h1>
           <p class="hero-lead">
-            進学偏差値は、進学先のランク分布に重みを付けて算出した簡易スコアです。進学先の
-            質を比較しやすくするための指標として活用しています。
+            進学偏差値は、合格実績のランク分布に重みを付けて算出した簡易スコアです。合格実績の
+            傾向を比較しやすくするための指標として活用しています。
           </p>
         </div>
       </section>
@@ -39,8 +40,8 @@
           <article class="calc-card">
             <h2>算出の考え方</h2>
             <p>
-              進学先の大学をランク（S/A/B/C）に分類し、人数比率に重みを掛けて加重平均します。
-              進学先の分布が高ランク寄りほどスコアが高くなります。
+              合格先の大学をランク（S/A/B/C）に分類し、人数比率に重みを掛けて加重平均します。
+              合格実績の分布が高ランク寄りほどスコアが高くなります。
             </p>
             <p class="formula">進学偏差値 = Σ(比率 × 重み) / Σ(比率)</p>
           </article>
@@ -223,44 +224,46 @@
 
           <article class="calc-card">
             <h2>重み付け</h2>
-            <table class="calc-table">
-              <thead>
-                <tr>
-                  <th>ランク</th>
-                  <th>重み</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>S</td>
-                  <td>80</td>
-                </tr>
-                <tr>
-                  <td>A</td>
-                  <td>70</td>
-                </tr>
-                <tr>
-                  <td>B</td>
-                  <td>60</td>
-                </tr>
-                <tr>
-                  <td>C</td>
-                  <td>50</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="calc-table-container">
+              <table class="calc-table">
+                <thead>
+                  <tr>
+                    <th>ランク</th>
+                    <th>重み</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>S</td>
+                    <td>80</td>
+                  </tr>
+                  <tr>
+                    <td>A</td>
+                    <td>70</td>
+                  </tr>
+                  <tr>
+                    <td>B</td>
+                    <td>60</td>
+                  </tr>
+                  <tr>
+                    <td>C</td>
+                    <td>50</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </article>
 
           <article class="calc-card">
             <h2>計算ステップ</h2>
             <ol class="calc-steps">
-              <li>進学先データがある場合、大学名をランク分類します。</li>
+              <li>合格実績データがある場合、大学名をランク分類します。</li>
               <li>ランク別の人数比率（%）を算出します。</li>
               <li>比率に重みを掛けて加重平均を計算します。</li>
               <li>小数第1位で丸めて表示します。</li>
             </ol>
             <p class="calc-note">
-              進学先データがない場合は、CSVのtier_s〜tier_cを使用します。
+              合格実績データがない場合は、スコアの算出を行いません。
             </p>
           </article>
 
@@ -275,18 +278,18 @@
           <article class="calc-card">
             <h2>注意点</h2>
             <p>
-              進学偏差値は進学先の分布に基づく簡易指標です。実際の進学実績を補助的に可視化
+              進学偏差値は合格実績の分布に基づく簡易指標です。実際の合格実績を補助的に可視化
               することを目的としています。
             </p>
             <p class="calc-note">
-              浪人や就職は計算に含めないため、卒業生（進学者）の母数が多い高校ほど比率が安定し、
+              浪人や就職は計算に含めないため、合格者数が多い高校ほど比率が安定し、
               相対的に有利に見える場合があります。
             </p>
             <p class="calc-note">
-              大学附属高校は進学先が系列大学に偏りやすいため、相対的に有利に見える場合があります。
+              大学附属高校は合格実績が系列大学に偏りやすいため、相対的に有利に見える場合があります。
             </p>
             <p class="calc-note">
-              進学先人数が0の場合はスコアを表示しません（「-」表示）。
+              合格者数が0の場合はスコアを表示しません（「-」表示）。
             </p>
           </article>
         </div>

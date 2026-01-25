@@ -97,14 +97,74 @@ const SchoolData = (() => {
     大正大: "大正大学",
   };
 
+  const PUBLIC_UNIVERSITY_NAMES = new Set([
+    "北海道大学",
+    "東北大学",
+    "東京大学",
+    "名古屋大学",
+    "京都大学",
+    "大阪大学",
+    "九州大学",
+    "筑波大学",
+    "千葉大学",
+    "横浜国立大学",
+    "一橋大学",
+    "東京科学大学",
+    "東京農工大学",
+    "東京学芸大学",
+    "東京外国語大学",
+    "東京海洋大学",
+    "電気通信大学",
+    "東京藝術大学",
+    "お茶の水女子大学",
+    "埼玉大学",
+    "群馬大学",
+    "茨城大学",
+    "宇都宮大学",
+    "新潟大学",
+    "富山大学",
+    "山梨大学",
+    "信州大学",
+    "福井大学",
+    "滋賀医科大学",
+    "浜松医科大学",
+    "山形大学",
+    "秋田大学",
+    "弘前大学",
+    "旭川医科大学",
+    "帯広畜産大学",
+    "神戸大学",
+    "島根大学",
+    "愛媛大学",
+    "長崎大学",
+    "宮崎大学",
+    "琉球大学",
+    "大阪公立大学",
+    "東京都立大学",
+    "横浜市立大学",
+    "高崎経済大学",
+    "前橋工科大学",
+    "福島県立医科大学",
+    "京都市立芸術大学",
+    "水産大学校",
+    "気象大学校",
+    "防衛医科大学校",
+  ]);
+
+  const PUBLIC_UNIVERSITY_PATTERNS = [
+    /(?:都|道|府|県|市)立大学$/u,
+    /公立大学$/u,
+    /大学校$/u,
+  ];
+
   const UNIVERSITY_TIER_MAP = buildUniversityTierMap(UNIVERSITY_GROUPS);
   const DEFAULT_TIER = "C";
 
-  const SAMPLE_CSV = `id,year,slug,school_name,homepage_url,ward,type,gender,tier_s,tier_a,tier_b,tier_c,destinations,notes
-11,2025,adachi-gakuen,足立学園高等学校,https://www.adachigakuen-jh.ed.jp/,足立区,私立,男子校,7.5,12.7,27.4,52.4,麗澤大学:80|日本大学:76|千葉工業大学:44|東洋大学:33|東京理科大学:28|大正大学:27|法政大学:24|専修大学:21|東京電機大学:21|明治大学:18|獨協大学:18|立教大学:16|帝京大学:14|國學院大学:12|学習院大学:11|東海大学:9|立正大学:9|駒澤大学:9|東京農業大学:8|拓殖大学:7|早稲田大学:7|大東文化大学:6|成蹊大学:6|武蔵大学:6|日本工業大学:5|明星大学:5|明治学院大学:5|杏林大学:5|東京都市大学:5|芝浦工業大学:5|順天堂大学:5|中央学院大学:4|亜細亜大学:4|北里大学:4|千葉商科大学:4|工学院大学:4|文教大学:4|日本体育大学:4|東邦大学:4|桜美林大学:4|横浜薬科大学:4|流通経済大学:4|神奈川大学:4|中部大学:3|二松學舍大学:3|山梨学院大学:3|慶應義塾大学:3|成城大学:3|同志社大学:2|国際医療福祉大学:2|城西大学:2|日本獣医生命科学大学:2|東京大学:2|東京工科大学:2|東京工芸大学:2|東京経済大学:2|東京都立大学:2|石巻専修大学:2|立命館大学:2|筑波大学:2|青山学院大学:2|共栄大学:1|創価大学:1|千葉大学:1|国士舘大学:1|宮崎大学:1|岡山理科大学:1|帝京科学大学:1|帯広畜産大学:1|文京学院大学:1|文星芸術大学:1|日本経済大学:1|日本薬科大学:1|昭和薬科大学:1|東京医科大学:1|東京国際大学:1|東京未来大学:1|東京造形大学:1|武蔵野大学:1|水産大学校:1|江戸川大学:1|淑徳大学:1|湘南医療大学:1|玉川大学:1|産業能率大学:1|目白大学:1|神奈川工科大学:1|酪農学園大学:1|開智国際大学:1|関東学院大学:1|関西学院大学:1|麻布大学:1,2025合格実績
-12,2025,meiji-fuzoku-nakano,明治大学付属中野高等学校,https://www.nakanogakuen.ac.jp/,中野区,私立,男子校,1.8,85.2,12.2,0.8,明治大学:328|東京理科大学:21|早稲田大学:16|慶應義塾大学:12|上智大学:7|中央大学:6|日本大学:6|法政大学:6|青山学院大学:4|明治学院大学:3|東海大学:3|立命館大学:3|立教大学:3|聖マリアンナ医科大学:3|芝浦工業大学:3|北海道大学:2|国際医療福祉大学:2|國學院大学:2|東北大学:2|東邦大学:2|兵庫医科大学:1|前橋工科大学:1|名古屋大学:1|埼玉大学:1|日本医科大学:1|明海大学:1|杏林大学:1|東京医科大学:1|東京外国語大学:1|東京慈恵会医科大学:1|東京科学大学:1|東京藝術大学:1|東京農工大学:1|東洋大学:1|横浜国立大学:1|気象大学校:1|筑波大学:1|長崎大学:1|順天堂大学:1|駒澤大学:1,2025進路状況
-13,2025,tokyo-gakugei-fuzoku,東京学芸大学附属高等学校,https://www.gakugei-hs.setagaya.tokyo.jp/,世田谷区,国立,共学,47.7,29.0,7.0,16.3,早稲田大学:97|明治大学:84|東京理科大学:82|慶應義塾大学:76|中央大学:50|上智大学:37|法政大学:36|立教大学:33|日本大学:30|青山学院大学:23|東京大学:22|芝浦工業大学:17|学習院大学:12|一橋大学:11|明治学院大学:11|工学院大学:10|横浜国立大学:10|東洋大学:9|東京農業大学:8|東京都市大学:8|昭和女子大学:7|順天堂大学:7|東京科学大学:6|東邦大学（医学部）:6|立命館大学:6|京都大学:5|北里大学:5|北里大学（医学部）:5|国際医療福祉大学（医学部）:5|国際基督教大学:5|成蹊大学:5|昭和大学（医学部）:5|東京学芸大学:5|東海大学（医学部）:5|武蔵野美術大学:5|筑波大学:5|駒澤大学:5|東京女子大学:4|東京薬科大学:4|津田塾大学:4|お茶の水女子大学:3|共立女子大学:3|北海道大学:3|千葉大学:3|國學院大学:3|多摩美術大学:3|専修大学:3|杏林大学（医学部）:3|東京医科大学（医学部）:3|東京慈恵会医科大学（医学部）:3|東京農工大学:3|東北大学:3|獨協医科大学（医学部）:3|産業医科大学（医学部）:3|神奈川大学:3|近畿大学:3|同志社大学:2|大阪大学:2|島根大学（医学部）:2|成城大学:2|日本医科大学（医学部）:2|東京外国語大学:2|東京海洋大学:2|東京科学大学（医学部）:2|東京都立大学:2|東海大学:2|横浜市立大学:2|横浜薬科大学:2|獨協大学:2|玉川大学:2|琉球大学（医学部）:2|目白大学:2|藤田医科大学（医学部）:2|防衛医科大学校:2|順天堂大学（医学部）:2|海外:College of Wooster:1|海外:Ohio Wesleyan University:1|久留米大学（医学部）:1|九州大学:1|京都芸術大学:1|信州大学:1|信州大学（医学部）:1|千葉大学（医学部）:1|千葉工業大学:1|名古屋大学:1|国士舘大学:1|埼玉医科大学（医学部）:1|大妻女子大学:1|大阪公立大学:1|大阪大学（医学部）:1|女子栄養大学:1|学習院女子大学:1|宇都宮大学:1|富山大学:1|山形大学（医学部）:1|山梨大学:1|山梨大学（医学部）:1|川崎医科大学（医学部）:1|帝京大学:1|帝京大学（医学部）:1|帯広畜産大学:1|海外:延世大学社会科学大学:1|弘前大学（医学部）:1|慶應義塾大学（医学部）:1|海外:成均館大学芸術大学:1|文京学院大学:1|新潟大学（医学部）:1|日本歯科大学:1|日本獣医生命科学大学（医学部）:1|旭川医科大学（医学部）:1|明治薬科大学:1|昭和大学:1|杏林大学:1|東京家政大学:1|東北大学（医学部）:1|東邦大学:1|桜美林大学:1|横浜市立大学（医学部）:1|武蔵大学:1|武蔵野大学:1|浜松医科大学（医学部）:1|滋賀医科大学（医学部）:1|海外:漢陽大学:1|産業能率大学:1|神戸大学:1|神戸女学院大学:1|福井大学（医学部）:1|福岡大学（医学部）:1|福島県立医科大学（医学部）:1|秋田大学:1|秋田大学（医学部）:1|群馬大学:1|茨城大学:1|関西大学:1|電気通信大学:1|高千穂大学:1|高崎経済大学:1,2025進路状況（学部合算）
-14,2025,kaisei,開成高等学校,https://kaiseigakuen.jp/,荒川区,私立,男子校,0,0,0,0,早稲田大学:257|慶應義塾大学:172|東京大学:150|東京理科大学:57|上智大学:41|明治大学:38|日本医科大学（医学部）:24|防衛医科大学校（医学部）:24|千葉大学（医学部）:21|一橋大学:18|順天堂大学（医学部）:18|慶應義塾大学（医学部）:17|東京慈恵会医科大学（医学部）:17|国際医療福祉大学（医学部）:14|中央大学:13|東京科学大学（医学部）:13|京都大学:11|東京科学大学:9|北海道大学:8|法政大学:8|山梨大学（医学部）:7|日本大学:7|立教大学:6|横浜国立大学:5|東京医科大学（医学部）:4|東北大学:4|同志社大学:3|富山大学（医学部）:3|帝京大学（医学部）:3|東洋大学:3|気象大学校:3|立命館大学:3|群馬大学（医学部）:3|青山学院大学:3|信州大学（医学部）:2|専修大学:2|新潟大学（医学部）:2|日本大学（医学部）:2|昭和大学（医学部）:2|東京都市大学:2|東邦大学（医学部）:2|武蔵野美術大学:2|神奈川大学:2|筑波大学:2|芝浦工業大学:2|駒澤大学:2|ZEN大学:1|デジタルハリウッド大学:1|九州大学:1|九州大学（医学部）:1|京都外国語大学:1|京都大学（医学部）:1|京都市立芸術大学:1|北里大学:1|千葉大学:1|千葉工業大学:1|名古屋大学:1|名古屋大学（医学部）:1|埼玉大学:1|大阪大学:1|学習院大学:1|山形大学（医学部）:1|岩手医科大学（医学部）:1|島根大学（医学部）:1|明治学院大学:1|東京学芸大学:1|東京歯科大学:1|東京薬科大学:1|東京農工大学:1|東北医科薬科大学（医学部）:1|東北大学（医学部）:1|武蔵大学:1|海外:Columbia:1|海外:Cornell:1|海外:Duke:1|海外:Imperial College London:1|海外:Iowa State:1|海外:Johns Hopkins:1|海外:McGill University:1|海外:Northeastern University:1|海外:Penn State:1|海外:UC Davis:1|海外:UC San Diego:1|海外:UC Santa Barbara:1|海外:University of British Columbia:1|海外:University of Illinois Urbana-Champaign:1|海外:University of Michigan:1|海外:University of Pennsylvania:1|海外:University of Pittsburgh:1|海外:University of Southern California:1|海外:University of Toronto:1|海外:University of Wisconsin:1|滋賀医科大学（医学部）:1|獨協医科大学（医学部）:1|筑波大学（医学部）:1|長崎大学（医学部）:1|高崎経済大学:1,2025進路状況（開成高校PDF）`;
+  const SAMPLE_CSV = `year,slug,school_name,homepage_url,ward,type,gender,destinations,destinations_file,notes
+2025,adachi-gakuen,足立学園高等学校,https://www.adachigakuen-jh.ed.jp/,足立区,私立,男子校,麗澤大学:80|日本大学:76|千葉工業大学:44,,2025合格実績
+2025,meiji-fuzoku-nakano,明治大学付属中野高等学校,https://www.nakanogakuen.ac.jp/,中野区,私立,男子校,明治大学:328|東京理科大学:21|早稲田大学:16,,2025進路状況
+2025,tokyo-gakugei-fuzoku,東京学芸大学附属高等学校,https://www.gakugei-hs.setagaya.tokyo.jp/,世田谷区,国立,共学,早稲田大学:97|明治大学:84|東京理科大学:82,,2025進路状況（学部合算）
+2025,kaisei,開成高等学校,https://kaiseigakuen.jp/,荒川区,私立,男子校,早稲田大学:257|慶應義塾大学:172|東京大学:150,,2025進路状況（開成高校PDF）`;
 
   async function loadSchools() {
     let csvText = "";
@@ -126,11 +186,14 @@ const SchoolData = (() => {
     }
 
     const rows = parseCsv(csvText);
+    if (!usedFallback) {
+      await attachDestinationsFromFiles(rows, dataPath);
+    }
     const enriched = rows.map(enrichSchoolData).filter(Boolean);
-    const grouped = groupSchoolsById(enriched);
+    const grouped = groupSchoolsBySlug(enriched);
     if (!grouped.length && !usedFallback) {
       const fallback = parseCsv(SAMPLE_CSV).map(enrichSchoolData).filter(Boolean);
-      return groupSchoolsById(fallback);
+      return groupSchoolsBySlug(fallback);
     }
     return grouped;
   }
@@ -157,6 +220,7 @@ const SchoolData = (() => {
   function enrichSchoolData(row) {
     const year = parseYear(row.year);
     const slug = String(row.slug || "").trim();
+    if (!slug) return null;
     const websiteUrl = normalizeUrl(row.homepage_url);
     const tierS = parseNumber(row.tier_s);
     const tierA = parseNumber(row.tier_a);
@@ -173,7 +237,6 @@ const SchoolData = (() => {
     const advScore = computeAdvScore(tiers);
 
     return {
-      id: row.id,
       year,
       slug,
       websiteUrl,
@@ -208,6 +271,11 @@ const SchoolData = (() => {
     if (!value) {
       return [];
     }
+    if (Array.isArray(value)) {
+      return value
+        .map((item) => normalizeDestinationEntry(item))
+        .filter((item) => item && item.name);
+    }
     return value
       .split("|")
       .map((item) => item.trim())
@@ -219,14 +287,155 @@ const SchoolData = (() => {
         }
         const namePart = item.slice(0, separatorIndex);
         const countPart = item.slice(separatorIndex + 1);
-        const rawName = (namePart || "").trim();
-        const overseasMatch = rawName.match(/^(海外大学|海外大|海外):\s*(.+)$/u);
-        const isOverseas = Boolean(overseasMatch);
-        const name = (overseasMatch ? overseasMatch[2] : rawName).trim();
-        const count = parseNumber(countPart);
-        return { name, count, isOverseas };
+        return normalizeDestinationEntry({
+          name: namePart,
+          count: countPart,
+        });
       })
       .filter((item) => item && item.name);
+  }
+
+  async function attachDestinationsFromFiles(rows, dataPath) {
+    const baseUrl = new URL(dataPath, window.location.href);
+    const cache = new Map();
+    const tasks = rows.map(async (row) => {
+      const filePath = String(row.destinations_file || "").trim();
+      if (!filePath) return;
+      try {
+        let text = cache.get(filePath);
+        if (!text) {
+          const url = new URL(filePath, baseUrl).toString();
+          const response = await fetch(url);
+          if (!response.ok) return;
+          text = await response.text();
+          cache.set(filePath, text);
+        }
+        const yearValue = parseYear(row.year);
+        row.destinations = parseDestinationsCsv(text, yearValue);
+      } catch (error) {
+        return;
+      }
+    });
+    await Promise.all(tasks);
+  }
+
+  function parseDestinationsCsv(text, filterYear = null) {
+    const trimmed = String(text || "").trim();
+    if (!trimmed) return [];
+    const lines = trimmed.split(/\r?\n/).filter(Boolean);
+    if (!lines.length) return [];
+    const rows = lines.map((line) =>
+      line.split(",").map((cell) => cell.trim())
+    );
+    const header = rows[0] ?? [];
+    const headerMap = header.reduce((acc, cell, index) => {
+      const key = String(cell || "").trim().toLowerCase();
+      if (/^(year|年度)$/i.test(key)) {
+        acc.year = index;
+      } else if (/^(name|大学名|university)$/i.test(key)) {
+        acc.name = index;
+      } else if (/^(count|人数|合格者数)$/i.test(key)) {
+        acc.count = index;
+      } else if (/^(is_overseas|overseas|海外|海外大)$/i.test(key)) {
+        acc.overseas = index;
+      } else if (/^(category|区分|分類|種別)$/i.test(key)) {
+        acc.category = index;
+      }
+      return acc;
+    }, {});
+    const hasHeader = Object.keys(headerMap).length > 0;
+    const startIndex = hasHeader ? 1 : 0;
+    return rows
+      .slice(startIndex)
+      .map((row) => {
+        const yearValue =
+          hasHeader && headerMap.year != null ? parseYear(row[headerMap.year]) : null;
+        if (Number.isFinite(filterYear) && headerMap.year != null) {
+          if (!Number.isFinite(yearValue) || yearValue !== Number(filterYear)) {
+            return null;
+          }
+        }
+        const name = hasHeader ? row[headerMap.name ?? 0] : row[0];
+        const count = hasHeader ? row[headerMap.count ?? 1] : row[1];
+        const overseas = hasHeader ? row[headerMap.overseas ?? 2] : row[2];
+        const category = hasHeader ? row[headerMap.category ?? 3] : row[3];
+        return normalizeDestinationEntry({
+          name,
+          count,
+          isOverseas: parseOverseasFlag(overseas),
+          category,
+        });
+      })
+      .filter((item) => item && item.name);
+  }
+
+  function parseOverseasFlag(value) {
+    const normalized = String(value || "").trim().toLowerCase();
+    return (
+      normalized === "1" ||
+      normalized === "true" ||
+      normalized === "yes" ||
+      normalized === "y" ||
+      normalized === "海外"
+    );
+  }
+
+  function normalizeDestinationEntry(entry) {
+    if (!entry) return null;
+    if (Array.isArray(entry)) {
+      return normalizeDestinationEntry({
+        name: entry[0],
+        count: entry[1],
+        isOverseas: entry[2],
+      });
+    }
+    if (typeof entry === "string") {
+      return normalizeDestinationEntry({ name: entry, count: 0 });
+    }
+    const rawName = String(entry.name || "").trim();
+    if (!rawName) return null;
+    const overseasMatch = rawName.match(/^(海外大学|海外大|海外):\s*(.+)$/u);
+    const normalizedCategory = normalizeDestinationCategory(
+      entry.category ?? entry.type ?? entry.group
+    );
+    const isOverseas =
+      normalizedCategory === "overseas" ||
+      Boolean(entry.isOverseas) ||
+      Boolean(entry.overseas) ||
+      Boolean(overseasMatch);
+    const name = (overseasMatch ? overseasMatch[2] : rawName).trim();
+    if (!name) return null;
+    const isMedical =
+      normalizedCategory === "medical" || isMedicalDestinationName(name);
+    const count = parseNumber(entry.count);
+    const category =
+      isOverseas
+        ? "overseas"
+        : isMedical
+        ? "medical"
+        : normalizedCategory ??
+          (isPublicUniversityName(name) ? "public" : "private");
+    return { name, count, isOverseas: category === "overseas", category };
+  }
+
+  function normalizeDestinationCategory(value) {
+    const normalized = String(value || "").trim().toLowerCase();
+    if (!normalized) return null;
+    if (/(海外|overseas)/u.test(normalized)) return "overseas";
+    if (/(医学部|medical)/u.test(normalized)) return "medical";
+    if (/(国公立|国立|公立|public)/u.test(normalized)) return "public";
+    if (/(私立|private)/u.test(normalized)) return "private";
+    return null;
+  }
+
+  function isPublicUniversityName(name) {
+    if (!name) return false;
+    if (PUBLIC_UNIVERSITY_NAMES.has(name)) return true;
+    return PUBLIC_UNIVERSITY_PATTERNS.some((pattern) => pattern.test(name));
+  }
+
+  function isMedicalDestinationName(name) {
+    return /(医学部|医科大学)/u.test(String(name || "").trim());
   }
 
   function computeTiersFromDestinations(destinations) {
@@ -300,16 +509,15 @@ const SchoolData = (() => {
     return Number.isFinite(parsed) ? Math.trunc(parsed) : null;
   }
 
-  function groupSchoolsById(entries) {
+  function groupSchoolsBySlug(entries) {
     const map = new Map();
     entries.forEach((entry) => {
-      if (!entry || !entry.id) return;
-      const id = String(entry.id);
-      let school = map.get(id);
+      if (!entry || !entry.slug) return;
+      const slug = String(entry.slug);
+      let school = map.get(slug);
       if (!school) {
         school = {
-          id,
-          slug: entry.slug || id,
+          slug,
           websiteUrl: entry.websiteUrl || "",
           name: entry.name,
           ward: entry.ward,
@@ -317,10 +525,7 @@ const SchoolData = (() => {
           gender: entry.gender,
           years: [],
         };
-        map.set(id, school);
-      }
-      if (!school.slug && entry.slug) {
-        school.slug = entry.slug;
+        map.set(slug, school);
       }
       if (!school.websiteUrl && entry.websiteUrl) {
         school.websiteUrl = entry.websiteUrl;

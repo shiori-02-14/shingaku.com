@@ -1,0 +1,17 @@
+# 合格実績データの編集方法
+
+- `data/schools.csv` の `destinations_file` にこのフォルダのCSVを指定します。
+- ファイル名は「高校のローマ字表記」にします。例: `adachi-gakuen.csv`
+- 年度ごとに記録したい場合は、CSVに `year` 列を追加して同じファイルに複数年度を入れます。
+- CSVの列は `year,name,count,is_overseas,category` です（1行目はヘッダー推奨）。
+- `is_overseas` は `1` / `true` / `海外` のいずれかで海外大学扱いになります。
+- `category` は任意で `国公立` / `私立` / `医学部` / `海外`（英語なら `public` / `private` / `medical` / `overseas`）を指定できます。
+
+例:
+
+```
+year,name,count,is_overseas,category
+2025,東京大学,20,,国公立
+2025,Harvard University,1,1,海外
+2026,東京大学,18,,国公立
+```
