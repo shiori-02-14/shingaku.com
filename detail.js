@@ -53,6 +53,12 @@ function cacheElements() {
   elements.tierLine = document.getElementById("tierLine");
   elements.tierBar = document.getElementById("tierBar");
   elements.destinationsList = document.getElementById("destinationsList");
+  elements.destinationsOverseasSection = document.getElementById(
+    "destinationsOverseasSection"
+  );
+  elements.destinationsOverseasList = document.getElementById(
+    "destinationsOverseasList"
+  );
   elements.destinationsTotal = document.getElementById("destinationsTotal");
   elements.detailRoot = document.getElementById("detailRoot");
   elements.destinationsChart = document.getElementById("destinationsChart");
@@ -290,6 +296,12 @@ function renderTierBar(tiers) {
 
 function renderDestinations(destinations, yearLabel, isAvailable = true) {
   elements.destinationsList.innerHTML = "";
+  if (elements.destinationsOverseasList) {
+    elements.destinationsOverseasList.innerHTML = "";
+  }
+  if (elements.destinationsOverseasSection) {
+    elements.destinationsOverseasSection.style.display = "none";
+  }
   const prefix = yearLabel ? `${yearLabel} ` : "";
   if (!isAvailable) {
     elements.destinationsTotal.textContent = `${prefix}${NO_DATA_MESSAGE}`;
@@ -300,11 +312,34 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
     return;
   }
 
-  const total = destinations.reduce((sum, item) => sum + item.count, 0);
-  elements.destinationsTotal.textContent = `${prefix}合計 ${total}名`;
+  const domestic = destinations.filter((item) => !item.isOverseas);
+  const overseas = destinations.filter((item) => item.isOverseas);
+  const domesticTotal = domestic.reduce((sum, item) => sum + item.count, 0);
+  const overseasTotal = overseas.reduce((sum, item) => sum + item.count, 0);
+  const total = domesticTotal + overseasTotal;
+  const overseasNote = overseasTotal ? `（海外 ${overseasTotal}名）` : "";
+  elements.destinationsTotal.textContent = `${prefix}合計 ${total}名${overseasNote}`;
 
+  renderDestinationList(domestic, domesticTotal, elements.destinationsList);
+
+  if (
+    overseas.length &&
+    elements.destinationsOverseasSection &&
+    elements.destinationsOverseasList
+  ) {
+    elements.destinationsOverseasSection.style.display = "";
+    renderDestinationList(
+      overseas,
+      overseasTotal,
+      elements.destinationsOverseasList
+    );
+  }
+}
+
+function renderDestinationList(items, total, target) {
+  if (!target) return;
   const fragment = document.createDocumentFragment();
-  destinations.forEach((item) => {
+  items.forEach((item) => {
     const li = document.createElement("li");
     li.className = "destination-item";
     const ratio = total ? Math.round((item.count / total) * 100) : 0;
@@ -314,7 +349,7 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
     `;
     fragment.appendChild(li);
   });
-  elements.destinationsList.appendChild(fragment);
+  target.appendChild(fragment);
 }
 
 function renderNotFound(message) {
@@ -400,7 +435,8 @@ function renderDestinationsChart(destinations) {
   if (!elements.destinationsChart) {
     return;
   }
-  if (!destinations || !destinations.length) {
+  const filtered = destinations?.filter((item) => !item.isOverseas) ?? [];
+  if (!filtered.length) {
     destroyChart("destinations");
     clearCanvas(elements.destinationsChart);
     return;
@@ -410,7 +446,7 @@ function renderDestinationsChart(destinations) {
     chartInstances.destinations.destroy();
   }
 
-  const sorted = [...destinations]
+  const sorted = [...filtered]
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 

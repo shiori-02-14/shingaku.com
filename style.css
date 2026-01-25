@@ -1390,6 +1390,32 @@ h1 {
   gap: 10px;
 }
 
+.destination-section {
+  margin-top: 20px;
+}
+
+.destination-section-title {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #5b677a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.destination-section-title::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #7fa3e5;
+}
+
+.destination-overseas .destination-list {
+  margin-top: 8px;
+}
+
 .destination-item {
   display: flex;
   justify-content: space-between;
