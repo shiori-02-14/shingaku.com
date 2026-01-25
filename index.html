@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>進学偏差値.com | 東京23区 高校情報</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="data.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="logo" href="" aria-label="ページを更新する" title="クリックで更新">
+          <span class="logo-mark">進学偏差値.com</span>
+          <span class="logo-sub">東京23区 高校情報</span>
+        </a>
+        <nav class="header-nav">
+          <a class="nav-link is-active" href="index.html">高校を探す</a>
+          <a class="nav-link" href="ward-ranking.html">区別ランキング</a>
+          <a class="nav-link" href="comparison.html" id="comparisonLink">
+            比較
+            <span class="comparison-badge" id="comparisonBadge" style="display: none;"></span>
+          </a>
+          <a class="nav-link" href="#about">進学偏差値とは</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <p class="eyebrow">東京都23区スタートアップ</p>
+          <h1>進学先で見る、高校選び。</h1>
+          <p class="hero-lead">
+            進学偏差値は、進学先のランク分布から簡易算出した指標です。単純な偏差値に
+            依存しない比較軸として、進学先の質を可視化します。
+          </p>
+          <div class="notice">
+            ※本ページの学校データはサンプルです。実データに差し替えて運用してください。
+          </div>
+        </div>
+      </section>
+
+      <section class="search-panel">
+        <div class="container">
+          <form id="search-form" class="search-form">
+            <div class="form-grid">
+              <label class="field">
+                <span>区</span>
+                <select id="wardFilter">
+                  <option value="">すべて</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>国公私立</span>
+                <select id="typeFilter">
+                  <option value="">すべて</option>
+                  <option value="公立">公立</option>
+                  <option value="私立">私立</option>
+                  <option value="国立">国立</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>男女</span>
+                <select id="genderFilter">
+                  <option value="">すべて</option>
+                  <option value="共学">共学</option>
+                  <option value="男子校">男子校</option>
+                  <option value="女子校">女子校</option>
+                </select>
+              </label>
+              <label class="field keyword-field">
+                <span>高校名</span>
+                <input
+                  id="keywordFilter"
+                  type="text"
+                  placeholder="例: ○○高校"
+                  autocomplete="off"
+                />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="ghost-button" id="resetFilters">
+                条件をクリア
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="results">
+        <div class="container">
+          <div class="results-header">
+            <div>
+              <h2>検索結果</h2>
+              <p class="results-count" id="resultsCount">読み込み中...</p>
+            </div>
+            <label class="sort-field">
+              <span>並び替え</span>
+              <select id="sortSelect">
+                <option value="adv-desc">進学偏差値が高い順</option>
+                <option value="adv-asc">進学偏差値が低い順</option>
+                <option value="name-asc">学校名順</option>
+              </select>
+            </label>
+          </div>
+          <div id="resultsList" class="card-grid"></div>
+        </div>
+      </section>
+
+      <section class="about" id="about">
+        <div class="container about-inner">
+          <div class="about-card calculation-card">
+            <h2>進学偏差値の算出</h2>
+            <p>
+              進学先のランク分布に重みを付けて算出した簡易スコアです。MVPでは
+              <strong>S=80 / A=70 / B=60 / C=50</strong> の重みを使っています。
+            </p>
+            <p class="formula">
+              進学偏差値 = Σ(比率 × 重み) / Σ(比率)
+            </p>
+          </div>
+          <div class="about-card">
+            <h3>このMVPでできること</h3>
+            <ul>
+              <li>東京23区の学校を条件検索</li>
+              <li>進学偏差値とランク内訳の比較</li>
+              <li>学校属性をカードで俯瞰</li>
+              <li>複数校の比較機能</li>
+              <li>年度別トレンドの可視化</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>進学偏差値.com（MVP）</p>
+        <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+      </div>
+    </footer>
+  </body>
+</html>

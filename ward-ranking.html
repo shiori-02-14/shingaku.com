@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>区別ランキング | 進学偏差値.com</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="data.js" defer></script>
+    <script src="ward-ranking.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="logo" href="" aria-label="ページを更新する" title="クリックで更新">
+          <span class="logo-mark">進学偏差値.com</span>
+          <span class="logo-sub">東京23区 高校情報</span>
+        </a>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html">高校を探す</a>
+          <a class="nav-link is-active" href="ward-ranking.html"
+            >区別ランキング</a
+          >
+          <a class="nav-link" href="index.html#about">進学偏差値とは</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <p class="eyebrow">区別ランキング</p>
+          <h1>区内の進学偏差値を比較する</h1>
+          <p class="hero-lead">
+            区を選ぶと、その区内の学校が進学偏差値の高い順に並びます。
+          </p>
+        </div>
+      </section>
+
+      <section class="search-panel">
+        <div class="container">
+          <form class="search-form">
+            <div class="form-grid">
+              <label class="field">
+                <span>区を選択</span>
+                <select id="wardSelect">
+                  <option value="">選択してください</option>
+                </select>
+              </label>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="results">
+        <div class="container">
+          <div class="results-header ranking-header">
+            <div>
+              <h2>ランキング</h2>
+              <p class="results-count" id="rankingCount">区を選択してください</p>
+            </div>
+          </div>
+          <div id="rankingList" class="ranking-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>進学偏差値.com（MVP）</p>
+        <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+      </div>
+    </footer>
+  </body>
+</html>

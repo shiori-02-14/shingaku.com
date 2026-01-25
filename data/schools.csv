@@ -1,0 +1,5 @@
+id,year,slug,school_name,homepage_url,ward,type,gender,tier_s,tier_a,tier_b,tier_c,destinations,notes
+11,2025,adachi-gakuen,足立学園高等学校,https://www.adachigakuen-jh.ed.jp/,足立区,私立,男子校,7.5,12.7,27.4,52.4,日本大学:76|東洋大学:33|東京理科大学:28|大正大学:27|法政大学:24,2025合格実績
+12,2025,meiji-fuzoku-nakano,明治大学付属中野高等学校,https://www.nakanogakuen.ac.jp/,中野区,私立,男子校,1.8,85.2,12.2,0.8,明治大学:327|早稲田大学:16|慶應義塾大学:12,2025進路状況
+13,2025,tokyo-gakugei-fuzoku,東京学芸大学附属高等学校,https://www.gakugei-hs.setagaya.tokyo.jp/,世田谷区,国立,共学,47.7,29.0,7.0,16.3,東京大学:20|東京科学大学:15|筑波大学:9,2025進路状況（学部合算）
+14,2025,kaisei,開成高等学校,https://kaiseigakuen.jp/,荒川区,私立,男子校,0,0,0,0,東京大学:149|早稲田大学:48|慶應義塾大学:34|東京科学大学:21|千葉大学:21|一橋大学:16|京都大学:11|北海道大学:5|筑波大学:3|横浜国立大学:3|名古屋大学:2|九州大学:2,2025進路状況（開成高校PDF）

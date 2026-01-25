@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>学校比較 | 進学偏差値.com</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="data.js" defer></script>
+    <script src="comparison.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="logo" href="" aria-label="ページを更新する" title="クリックで更新">
+          <span class="logo-mark">進学偏差値.com</span>
+          <span class="logo-sub">東京23区 高校情報</span>
+        </a>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html">高校を探す</a>
+          <a class="nav-link" href="ward-ranking.html">区別ランキング</a>
+          <a class="nav-link is-active" href="comparison.html">比較</a>
+          <a class="nav-link" href="index.html#about">進学偏差値とは</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <p class="eyebrow">学校比較</p>
+          <h1>複数校を並べて比較</h1>
+          <p class="hero-lead">
+            選択した学校の進学偏差値やランク分布を並べて比較できます。
+          </p>
+        </div>
+      </section>
+
+      <section class="results">
+        <div class="container">
+          <div id="comparisonContent">
+            <div class="empty-state">
+              比較する学校が選択されていません。<br />
+              <a href="index.html">高校を探す</a>ページから学校を選択してください。
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>進学偏差値.com（MVP）</p>
+        <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+      </div>
+    </footer>
+  </body>
+</html>
