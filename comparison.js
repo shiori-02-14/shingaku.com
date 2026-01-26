@@ -130,10 +130,13 @@ function renderComparison() {
             <th>国公私立</th>
             <th>男女</th>
             <th>進学偏差値</th>
-            <th>ランクS</th>
-            <th>ランクA</th>
-            <th>ランクB</th>
-            <th>ランクC</th>
+            <th>ランクss</th>
+            <th>ランクs</th>
+            <th>ランクa</th>
+            <th>ランクb</th>
+            <th>ランクc</th>
+            <th>ランクd</th>
+            <th>ランクe</th>
           </tr>
         </thead>
         <tbody>
@@ -150,10 +153,13 @@ function renderComparison() {
               <td>${escapeHtml(school.type)}</td>
               <td>${escapeHtml(school.gender)}</td>
               <td class="score-cell">${formatScore(school.advScore)}</td>
-              <td>${formatPercent(school.tiers.S)}%</td>
-              <td>${formatPercent(school.tiers.A)}%</td>
-              <td>${formatPercent(school.tiers.B)}%</td>
-              <td>${formatPercent(school.tiers.C)}%</td>
+              <td>${formatPercent(school.tiers.ss)}%</td>
+              <td>${formatPercent(school.tiers.s)}%</td>
+              <td>${formatPercent(school.tiers.a)}%</td>
+              <td>${formatPercent(school.tiers.b)}%</td>
+              <td>${formatPercent(school.tiers.c)}%</td>
+              <td>${formatPercent(school.tiers.d)}%</td>
+              <td>${formatPercent(school.tiers.e)}%</td>
             </tr>
           `;
               }
@@ -237,10 +243,13 @@ function renderTierChart() {
   }
 
   const labels = state.comparisonList.map((s) => escapeHtml(s.name));
-  const tierS = state.comparisonList.map((s) => s.tiers?.S || 0);
-  const tierA = state.comparisonList.map((s) => s.tiers?.A || 0);
-  const tierB = state.comparisonList.map((s) => s.tiers?.B || 0);
-  const tierC = state.comparisonList.map((s) => s.tiers?.C || 0);
+  const tierSs = state.comparisonList.map((s) => s.tiers?.ss || 0);
+  const tierS = state.comparisonList.map((s) => s.tiers?.s || 0);
+  const tierA = state.comparisonList.map((s) => s.tiers?.a || 0);
+  const tierB = state.comparisonList.map((s) => s.tiers?.b || 0);
+  const tierC = state.comparisonList.map((s) => s.tiers?.c || 0);
+  const tierD = state.comparisonList.map((s) => s.tiers?.d || 0);
+  const tierE = state.comparisonList.map((s) => s.tiers?.e || 0);
 
   chartInstances.tier = new Chart(canvas, {
     type: "bar",
@@ -248,24 +257,39 @@ function renderTierChart() {
       labels: labels,
       datasets: [
         {
-          label: "ランクS",
+          label: "ランクss",
+          data: tierSs,
+          backgroundColor: "#0d1b2a",
+        },
+        {
+          label: "ランクs",
           data: tierS,
           backgroundColor: "#1b4f9c",
         },
         {
-          label: "ランクA",
+          label: "ランクa",
           data: tierA,
           backgroundColor: "#4a7bd1",
         },
         {
-          label: "ランクB",
+          label: "ランクb",
           data: tierB,
           backgroundColor: "#7fa3e5",
         },
         {
-          label: "ランクC",
+          label: "ランクc",
           data: tierC,
+          backgroundColor: "#a8c0e8",
+        },
+        {
+          label: "ランクd",
+          data: tierD,
           backgroundColor: "#c2d4f2",
+        },
+        {
+          label: "ランクe",
+          data: tierE,
+          backgroundColor: "#e0e8f5",
         },
       ],
     },

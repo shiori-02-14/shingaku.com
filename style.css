@@ -655,6 +655,10 @@ h1 {
   height: 100%;
 }
 
+.tier-ss {
+  background: #0d1b2a;
+}
+
 .tier-s {
   background: #1b4f9c;
 }
@@ -668,7 +672,15 @@ h1 {
 }
 
 .tier-c {
+  background: #a8c0e8;
+}
+
+.tier-d {
   background: #c2d4f2;
+}
+
+.tier-e {
+  background: #e0e8f5;
 }
 
 .destination {
@@ -1800,3 +1812,174 @@ h1 {
   .chart-full-width .chart-container {
     height: 320px;
   }
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-nav {
+    gap: 8px;
+    row-gap: 8px;
+    width: 100%;
+  }
+
+  .nav-link {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .hero-inner {
+    padding: 18px 0 24px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .search-panel {
+    margin-top: 12px;
+  }
+
+  .search-form {
+    padding: 14px;
+  }
+
+  .form-grid {
+    gap: 12px;
+  }
+
+  .results {
+    padding-bottom: 24px;
+  }
+
+  .card-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .school-card {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .school-name {
+    font-size: 16px;
+  }
+
+  .score {
+    text-align: left;
+    margin-left: 0;
+  }
+
+  .score-value {
+    font-size: 22px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .tier-line {
+    font-size: 13px;
+    padding: 10px 12px;
+    margin: 14px 0 10px;
+  }
+
+  .tier-bar {
+    height: 12px;
+    margin-bottom: 16px;
+  }
+
+  .destination {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .destination-sections {
+    gap: 12px;
+  }
+
+  .destination-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .destination-item span:last-child {
+    font-size: 14px;
+  }
+
+  .ranking-list {
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .rank-card {
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .detail-hero .container {
+    padding: 20px 12px 16px;
+  }
+
+  .detail-body {
+    padding: 20px 0 32px;
+  }
+
+  .detail-grid {
+    gap: 16px;
+  }
+
+  .detail-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .detail-score {
+    padding: 16px;
+  }
+
+  .detail-score .score-value {
+    font-size: 32px;
+  }
+
+  .detail-meta {
+    gap: 10px;
+  }
+
+  .detail-card {
+    padding: 14px;
+  }
+
+  .detail-card h2 {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+  }
+
+  .chart-container {
+    height: 220px;
+    padding: 10px;
+  }
+
+  .chart-full-width .chart-container {
+    height: 260px;
+  }
+
+  .comparison-button {
+    padding: 10px 16px;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 10px;
+  }
+}

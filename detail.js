@@ -132,15 +132,17 @@ function renderDetail(school, year) {
   }
   const isAvailable = yearData.isAvailable !== false;
   const yearLabel = formatYearLabel(yearData.year);
-  const tiers = yearData.tiers ?? { S: 0, A: 0, B: 0, C: 0 };
+  const tiers = yearData.tiers ?? { ss: 0, s: 0, a: 0, b: 0, c: 0, d: 0, e: 0 };
   renderSchoolName(school);
   elements.scoreValue.textContent = formatScore(yearData.advScore);
   if (isAvailable) {
-    elements.tierLine.textContent = `${yearLabel ? `${yearLabel} ` : ""}ランク内訳: S ${formatPercent(
-      tiers.S
-    )}% / A ${formatPercent(tiers.A)}% / B ${formatPercent(
-      tiers.B
-    )}% / C ${formatPercent(tiers.C)}%`;
+    elements.tierLine.textContent = `${yearLabel ? `${yearLabel} ` : ""}ランク内訳: ss ${formatPercent(
+      tiers.ss
+    )}% / s ${formatPercent(tiers.s)}% / a ${formatPercent(
+      tiers.a
+    )}% / b ${formatPercent(tiers.b)}% / c ${formatPercent(
+      tiers.c
+    )}% / d ${formatPercent(tiers.d)}% / e ${formatPercent(tiers.e)}%`;
   } else {
     const prefix = yearLabel ? `${yearLabel} ` : "";
     elements.tierLine.textContent = `${prefix}${NO_DATA_MESSAGE}`;
@@ -241,7 +243,7 @@ function getYearData(school, year) {
 function buildMissingYearData(year) {
   return {
     year: Number.isFinite(year) ? Number(year) : null,
-    tiers: { S: 0, A: 0, B: 0, C: 0 },
+    tiers: { ss: 0, s: 0, a: 0, b: 0, c: 0, d: 0, e: 0 },
     advScore: null,
     destinations: [],
     notes: "",
@@ -279,12 +281,15 @@ function renderSchoolName(school) {
 
 function renderTierBar(tiers) {
   const spans = elements.tierBar.querySelectorAll("span");
-  if (spans.length < 4) return;
-  const safeTiers = tiers ?? { S: 0, A: 0, B: 0, C: 0 };
-  spans[0].style.width = `${safeWidth(safeTiers.S)}%`;
-  spans[1].style.width = `${safeWidth(safeTiers.A)}%`;
-  spans[2].style.width = `${safeWidth(safeTiers.B)}%`;
-  spans[3].style.width = `${safeWidth(safeTiers.C)}%`;
+  if (spans.length < 7) return;
+  const safeTiers = tiers ?? { ss: 0, s: 0, a: 0, b: 0, c: 0, d: 0, e: 0 };
+  spans[0].style.width = `${safeWidth(safeTiers.ss)}%`;
+  spans[1].style.width = `${safeWidth(safeTiers.s)}%`;
+  spans[2].style.width = `${safeWidth(safeTiers.a)}%`;
+  spans[3].style.width = `${safeWidth(safeTiers.b)}%`;
+  spans[4].style.width = `${safeWidth(safeTiers.c)}%`;
+  spans[5].style.width = `${safeWidth(safeTiers.d)}%`;
+  spans[6].style.width = `${safeWidth(safeTiers.e)}%`;
 }
 
 function renderDestinations(destinations, yearLabel, isAvailable = true) {
@@ -649,10 +654,13 @@ function renderTierChart(tiers) {
   }
 
   const data = [
-    { label: "S", value: tiers.S || 0, color: "#1b4f9c" },
-    { label: "A", value: tiers.A || 0, color: "#4a7bd1" },
-    { label: "B", value: tiers.B || 0, color: "#7fa3e5" },
-    { label: "C", value: tiers.C || 0, color: "#c2d4f2" },
+    { label: "ss", value: tiers.ss || 0, color: "#0d1b2a" },
+    { label: "s", value: tiers.s || 0, color: "#1b4f9c" },
+    { label: "a", value: tiers.a || 0, color: "#4a7bd1" },
+    { label: "b", value: tiers.b || 0, color: "#7fa3e5" },
+    { label: "c", value: tiers.c || 0, color: "#a8c0e8" },
+    { label: "d", value: tiers.d || 0, color: "#c2d4f2" },
+    { label: "e", value: tiers.e || 0, color: "#e0e8f5" },
   ].filter((item) => item.value > 0);
 
   if (!data.length) {
@@ -724,10 +732,13 @@ function renderTrendChart(school) {
 
   const labels = sortedYears.map((y) => `${y.year}年度`);
   const scores = sortedYears.map((y) => y.advScore ?? null);
-  const tierS = sortedYears.map((y) => (y.tiers?.S || 0));
-  const tierA = sortedYears.map((y) => (y.tiers?.A || 0));
-  const tierB = sortedYears.map((y) => (y.tiers?.B || 0));
-  const tierC = sortedYears.map((y) => (y.tiers?.C || 0));
+  const tierSs = sortedYears.map((y) => (y.tiers?.ss || 0));
+  const tierS = sortedYears.map((y) => (y.tiers?.s || 0));
+  const tierA = sortedYears.map((y) => (y.tiers?.a || 0));
+  const tierB = sortedYears.map((y) => (y.tiers?.b || 0));
+  const tierC = sortedYears.map((y) => (y.tiers?.c || 0));
+  const tierD = sortedYears.map((y) => (y.tiers?.d || 0));
+  const tierE = sortedYears.map((y) => (y.tiers?.e || 0));
 
   chartInstances.trend = new Chart(elements.trendChart, {
     type: "line",
@@ -745,7 +756,16 @@ function renderTrendChart(school) {
           yAxisID: "y",
         },
         {
-          label: "ランクS",
+          label: "ランクss",
+          data: tierSs,
+          borderColor: "#0d1b2a",
+          backgroundColor: "rgba(13, 27, 42, 0.3)",
+          borderWidth: 1,
+          fill: false,
+          yAxisID: "y1",
+        },
+        {
+          label: "ランクs",
           data: tierS,
           borderColor: "#1b4f9c",
           backgroundColor: "rgba(27, 79, 156, 0.3)",
@@ -754,7 +774,7 @@ function renderTrendChart(school) {
           yAxisID: "y1",
         },
         {
-          label: "ランクA",
+          label: "ランクa",
           data: tierA,
           borderColor: "#4a7bd1",
           backgroundColor: "rgba(74, 123, 209, 0.3)",
@@ -763,7 +783,7 @@ function renderTrendChart(school) {
           yAxisID: "y1",
         },
         {
-          label: "ランクB",
+          label: "ランクb",
           data: tierB,
           borderColor: "#7fa3e5",
           backgroundColor: "rgba(127, 163, 229, 0.3)",
@@ -772,10 +792,28 @@ function renderTrendChart(school) {
           yAxisID: "y1",
         },
         {
-          label: "ランクC",
+          label: "ランクc",
           data: tierC,
+          borderColor: "#a8c0e8",
+          backgroundColor: "rgba(168, 192, 232, 0.3)",
+          borderWidth: 1,
+          fill: false,
+          yAxisID: "y1",
+        },
+        {
+          label: "ランクd",
+          data: tierD,
           borderColor: "#c2d4f2",
           backgroundColor: "rgba(194, 212, 242, 0.3)",
+          borderWidth: 1,
+          fill: false,
+          yAxisID: "y1",
+        },
+        {
+          label: "ランクe",
+          data: tierE,
+          borderColor: "#e0e8f5",
+          backgroundColor: "rgba(224, 232, 245, 0.3)",
           borderWidth: 1,
           fill: false,
           yAxisID: "y1",

@@ -195,24 +195,35 @@ function createCard(school) {
       </div>
     </div>
     <div class="tier-line">
-      ランク内訳: S ${formatPercent(school.tiers.S)}% / A ${formatPercent(
-    school.tiers.A
-  )}% / B ${formatPercent(school.tiers.B)}% / C ${formatPercent(
-    school.tiers.C
-  )}%
+      ランク内訳: ss ${formatPercent(school.tiers.ss)}% / s ${formatPercent(
+    school.tiers.s
+  )}% / a ${formatPercent(school.tiers.a)}% / b ${formatPercent(
+    school.tiers.b
+  )}% / c ${formatPercent(school.tiers.c)}% / d ${formatPercent(
+    school.tiers.d
+  )}% / e ${formatPercent(school.tiers.e)}%
     </div>
     <div class="tier-bar">
+      <span class="tier-ss" style="width:${safeWidth(
+        school.tiers.ss
+      )}%"></span>
       <span class="tier-s" style="width:${safeWidth(
-        school.tiers.S
+        school.tiers.s
       )}%"></span>
       <span class="tier-a" style="width:${safeWidth(
-        school.tiers.A
+        school.tiers.a
       )}%"></span>
       <span class="tier-b" style="width:${safeWidth(
-        school.tiers.B
+        school.tiers.b
       )}%"></span>
       <span class="tier-c" style="width:${safeWidth(
-        school.tiers.C
+        school.tiers.c
+      )}%"></span>
+      <span class="tier-d" style="width:${safeWidth(
+        school.tiers.d
+      )}%"></span>
+      <span class="tier-e" style="width:${safeWidth(
+        school.tiers.e
       )}%"></span>
     </div>
     <div class="destination">

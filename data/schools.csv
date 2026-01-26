@@ -1,5 +1,5 @@
 year,slug,school_name,homepage_url,ward,type,gender,destinations,destinations_file,notes
-2025,adachi-gakuen,足立学園高等学校,https://www.adachigakuen-jh.ed.jp/,足立区,私立,男子校,,data/destinations/adachi-gakuen.csv,2025合格実績
-2025,meiji-fuzoku-nakano,明治大学付属中野高等学校,https://www.nakanogakuen.ac.jp/,中野区,私立,男子校,,data/destinations/meiji-fuzoku-nakano.csv,2025進路状況
-2025,tokyo-gakugei-fuzoku,東京学芸大学附属高等学校,https://www.gakugei-hs.setagaya.tokyo.jp/,世田谷区,国立,共学,,data/destinations/tokyo-gakugei-fuzoku.csv,2025進路状況（学部合算）
-2025,kaisei,開成高等学校,https://kaiseigakuen.jp/,荒川区,私立,男子校,,data/destinations/kaisei.csv,2025進路状況（開成高校PDF）
+,adachi-gakuen,足立学園高等学校,https://www.adachigakuen-jh.ed.jp/,足立区,私立,男子校,,data/destinations/adachi-gakuen.csv,2025合格実績
+,meiji-fuzoku-nakano,明治大学付属中野高等学校,https://www.nakanogakuen.ac.jp/,中野区,私立,男子校,,data/destinations/meiji-fuzoku-nakano.csv,2025進路状況
+,tokyo-gakugei-fuzoku,東京学芸大学附属高等学校,https://www.gakugei-hs.setagaya.tokyo.jp/,世田谷区,国立,共学,,data/destinations/tokyo-gakugei-fuzoku.csv,2025進路状況（学部合算）
+,kaisei,開成高等学校,https://kaiseigakuen.jp/,荒川区,私立,男子校,,data/destinations/kaisei.csv,2025進路状況（開成高校PDF）
