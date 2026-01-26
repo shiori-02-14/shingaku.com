@@ -692,7 +692,16 @@ const SchoolData = (() => {
   }
 
   function parseNumber(value) {
-    const parsed = Number(value);
+    if (value == null) return 0;
+    if (typeof value === "number") {
+      return Number.isFinite(value) ? value : 0;
+    }
+    const cleaned = String(value).trim();
+    if (!cleaned) return 0;
+    const normalized = cleaned.replace(/[,，\s]/g, "");
+    const matched = normalized.match(/-?\d+(?:\.\d+)?/);
+    if (!matched) return 0;
+    const parsed = Number(matched[0]);
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
