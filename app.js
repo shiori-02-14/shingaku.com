@@ -1,5 +1,6 @@
 const state = {
   schools: [],
+  regions: [],
   comparisonList: [],
 };
 
@@ -14,7 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupComparisonBadge();
   flags.hasSearchUI = hasSearchUI();
   if (flags.hasSearchUI) {
-    populateWardOptions();
     attachListeners();
   }
   if (flags.hasSearchUI || elements.totalSchools || elements.wardGrid || elements.rankingList) {
@@ -91,16 +91,77 @@ function bindLogoReload() {
   });
 }
 
-function populateWardOptions() {
+function populateWardOptions(regions = []) {
   if (!elements.wardFilter) return;
   const fragment = document.createDocumentFragment();
-  SchoolData.WARDS.forEach((ward) => {
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "地域を選択";
+  fragment.appendChild(placeholder);
+  regions.forEach((region) => {
     const option = document.createElement("option");
-    option.value = ward;
-    option.textContent = ward;
+    option.value = region;
+    option.textContent = region;
     fragment.appendChild(option);
   });
+  elements.wardFilter.innerHTML = "";
   elements.wardFilter.appendChild(fragment);
+}
+
+function getSortedRegions(schools) {
+  const set = new Set();
+  (schools || []).forEach((school) => {
+    const region = String(school?.ward || "").trim();
+    if (region) {
+      set.add(region);
+    }
+  });
+  return Array.from(set).sort((a, b) =>
+    a.localeCompare(b, "ja", { numeric: true, sensitivity: "base" })
+  );
+}
+
+function renderRegionFilter(regions = []) {
+  if (!elements.regionFilter) return;
+  const body = elements.regionFilter.querySelector(".region-filter-body");
+  if (!body) return;
+  body.innerHTML = "";
+
+  const allButton = document.createElement("button");
+  allButton.type = "button";
+  allButton.className = "region-link region-all";
+  allButton.dataset.region = "";
+  allButton.textContent = "すべての地域";
+  body.appendChild(allButton);
+
+  if (!regions.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "地域データがありません。";
+    body.appendChild(empty);
+    return;
+  }
+
+  const group = document.createElement("div");
+  group.className = "region-group";
+
+  const title = document.createElement("p");
+  title.className = "region-group-title";
+  title.textContent = "地域一覧";
+  group.appendChild(title);
+
+  const links = document.createElement("div");
+  links.className = "region-links";
+  regions.forEach((region) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "region-link";
+    button.dataset.region = region;
+    button.textContent = region;
+    links.appendChild(button);
+  });
+  group.appendChild(links);
+  body.appendChild(group);
 }
 
 function populateScoreOptions() {
@@ -165,10 +226,12 @@ function attachListeners() {
 
 async function loadSchools() {
   try {
-    const wardSet = new Set(SchoolData.WARDS);
-    state.schools = (await SchoolData.loadSchools()).filter((school) =>
-      wardSet.has(school.ward)
-    );
+    state.schools = await SchoolData.loadSchools();
+    state.regions = getSortedRegions(state.schools);
+    if (hasSearchUI()) {
+      populateWardOptions(state.regions);
+      renderRegionFilter(state.regions);
+    }
     if (!state.schools.length) {
       if (hasSearchUI()) {
         renderError("学校データが見つかりません。");
@@ -189,7 +252,11 @@ async function loadSchools() {
       updateResults();
     }
   } catch (error) {
+    state.schools = [];
+    state.regions = [];
     if (hasSearchUI()) {
+      populateWardOptions([]);
+      renderRegionFilter([]);
       renderError("学校データを読み込めませんでした。");
     }
     updateTotalSchools();
@@ -577,8 +644,18 @@ function renderWardGrid() {
   if (!elements.wardGrid) return;
   elements.wardGrid.innerHTML = "";
   const counts = countSchoolsByWard(state.schools);
+  const regions = state.regions.length
+    ? state.regions
+    : getSortedRegions(state.schools);
+  if (!regions.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "地域データがありません。";
+    elements.wardGrid.appendChild(empty);
+    return;
+  }
   const fragment = document.createDocumentFragment();
-  SchoolData.WARDS.forEach((ward) => {
+  regions.forEach((ward) => {
     const link = document.createElement("a");
     link.className = "ward-card";
     link.href = `search.html?ward=${encodeURIComponent(ward)}`;
@@ -638,21 +715,21 @@ function renderRankingMessage(message) {
 }
 
 function createRankCard(school, rank) {
-  const card = document.createElement("article");
-  card.className = "rank-card";
   const detailHref = school.slug
     ? `school.html?slug=${encodeURIComponent(school.slug)}`
     : "";
+  const card = document.createElement(detailHref ? "a" : "article");
+  card.className = "rank-card";
+  if (detailHref) {
+    card.href = detailHref;
+    card.setAttribute("aria-label", `${school.name}の詳細を見る`);
+  }
 
   card.innerHTML = `
     <div class="rank-badge">${rank}</div>
     <div class="rank-info">
       <h3 class="school-name">
-        ${
-          detailHref
-            ? `<a href="${detailHref}">${escapeHtml(school.name)}</a>`
-            : escapeHtml(school.name)
-        }
+        ${escapeHtml(school.name)}
       </h3>
       <div class="rank-meta">
         <span>${escapeHtml(school.ward)}</span>

@@ -361,11 +361,15 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
     0
   );
   const total = publicTotal + privateTotal + medicalTotal + overseasTotal;
+  const publicRatio = formatRatio(publicTotal, total);
+  const privateRatio = formatRatio(privateTotal, total);
+  const medicalRatio = formatRatio(medicalTotal, total);
+  const overseasRatio = formatRatio(overseasTotal, total);
   const breakdown = [
-    publicTotal ? `国公立 ${publicTotal}名` : "",
-    privateTotal ? `私立 ${privateTotal}名` : "",
-    medicalTotal ? `医学部 ${medicalTotal}名` : "",
-    overseasTotal ? `海外 ${overseasTotal}名` : "",
+    publicTotal ? `国公立 ${publicTotal}名 (${publicRatio}%)` : "",
+    privateTotal ? `私立 ${privateTotal}名 (${privateRatio}%)` : "",
+    medicalTotal ? `医学部 ${medicalTotal}名 (${medicalRatio}%)` : "",
+    overseasTotal ? `海外 ${overseasTotal}名 (${overseasRatio}%)` : "",
   ]
     .filter(Boolean)
     .join(" / ");
@@ -375,22 +379,26 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
   updateDestinationTitle(
     elements.destinationsPublicTitle,
     "国公立大学",
-    publicTotal
+    publicTotal,
+    publicRatio
   );
   updateDestinationTitle(
     elements.destinationsPrivateTitle,
     "私立大学",
-    privateTotal
+    privateTotal,
+    privateRatio
   );
   updateDestinationTitle(
     elements.destinationsMedicalTitle,
     "医学部",
-    medicalTotal
+    medicalTotal,
+    medicalRatio
   );
   updateDestinationTitle(
     elements.destinationsOverseasTitle,
     "海外大学",
-    overseasTotal
+    overseasTotal,
+    overseasRatio
   );
 
   if (
@@ -446,9 +454,9 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
   }
 }
 
-function updateDestinationTitle(target, label, total) {
+function updateDestinationTitle(target, label, total, ratio) {
   if (!target) return;
-  const suffix = total ? `（${total}名）` : "";
+  const suffix = total ? `（${total}名・${ratio}%）` : "";
   target.textContent = `${label}${suffix}`;
 }
 
@@ -512,6 +520,12 @@ function formatScore(value) {
 
 function formatPercent(value) {
   return Number.isFinite(value) ? value.toFixed(0) : "0";
+}
+
+function formatRatio(count, total) {
+  if (!total) return 0;
+  const ratio = (count / total) * 100;
+  return Math.round(ratio);
 }
 
 function formatYearLabel(year) {

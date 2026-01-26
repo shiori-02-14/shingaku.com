@@ -1,5 +1,6 @@
 const state = {
   schools: [],
+  regions: [],
 };
 
 const elements = {};
@@ -7,7 +8,6 @@ const elements = {};
 document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
   bindLogoReload();
-  populateWardOptions();
   attachListeners();
   loadSchools();
 });
@@ -43,13 +43,31 @@ function bindLogoReload() {
 
 function populateWardOptions() {
   const fragment = document.createDocumentFragment();
-  SchoolData.WARDS.forEach((ward) => {
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "選択してください";
+  fragment.appendChild(placeholder);
+  state.regions.forEach((region) => {
     const option = document.createElement("option");
-    option.value = ward;
-    option.textContent = ward;
+    option.value = region;
+    option.textContent = region;
     fragment.appendChild(option);
   });
+  elements.wardSelect.innerHTML = "";
   elements.wardSelect.appendChild(fragment);
+}
+
+function getSortedRegions(schools) {
+  const set = new Set();
+  (schools || []).forEach((school) => {
+    const region = String(school?.ward || "").trim();
+    if (region) {
+      set.add(region);
+    }
+  });
+  return Array.from(set).sort((a, b) =>
+    a.localeCompare(b, "ja", { numeric: true, sensitivity: "base" })
+  );
 }
 
 function attachListeners() {
@@ -60,6 +78,8 @@ function attachListeners() {
 async function loadSchools() {
   try {
     state.schools = await SchoolData.loadSchools();
+    state.regions = getSortedRegions(state.schools);
+    populateWardOptions();
     updateRanking();
   } catch (error) {
     renderMessage("ランキングを読み込めませんでした。");
@@ -100,21 +120,21 @@ function renderRanking(items) {
 }
 
 function createRankCard(school, rank) {
-  const card = document.createElement("article");
-  card.className = "rank-card";
   const detailHref = school.slug
     ? `school.html?slug=${encodeURIComponent(school.slug)}`
     : "";
+  const card = document.createElement(detailHref ? "a" : "article");
+  card.className = "rank-card";
+  if (detailHref) {
+    card.href = detailHref;
+    card.setAttribute("aria-label", `${school.name}の詳細を見る`);
+  }
 
   card.innerHTML = `
     <div class="rank-badge">${rank}</div>
     <div class="rank-info">
       <h3 class="school-name">
-        ${
-          detailHref
-            ? `<a href="${detailHref}">${escapeHtml(school.name)}</a>`
-            : escapeHtml(school.name)
-        }
+        ${escapeHtml(school.name)}
       </h3>
       <div class="rank-meta">
         <span>${escapeHtml(school.type)}</span>
