@@ -18,7 +18,7 @@
         </a>
         <nav class="header-nav">
           <a class="nav-link is-active" href="index.html">トップページ</a>
-          <a class="nav-link" href="index.html#search">学校検索</a>
+          <a class="nav-link" href="search.html">学校検索</a>
           <a class="nav-link" href="ward-ranking.html">ランキング</a>
           <a class="nav-link" href="comparison.html" id="comparisonLink">
             学校比較
@@ -32,105 +32,111 @@
     <main>
       <section class="hero">
         <div class="container hero-inner">
-          <h1>合格実績で見る、高校選び。</h1>
+          <p class="eyebrow">東京23区 高校情報</p>
+          <h1>東京23区の高校情報をまとめて検索</h1>
           <p class="hero-lead">
             進学偏差値は、合格実績のランク分布から簡易算出した指標です。単純な偏差値に
             依存しない比較軸として、合格実績の傾向を可視化します。
           </p>
+          <div class="hero-actions">
+            <a class="primary-link" href="search.html">学校検索をはじめる</a>
+            <a class="secondary-link" href="ward-ranking.html">ランキングを見る</a>
+          </div>
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="totalSchools">-</span>
+              <span class="stat-label">掲載高校数</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">23</span>
+              <span class="stat-label">区</span>
+            </div>
+          </div>
           <div class="notice">
             ※本ページの学校データはサンプルです。実データに差し替えて運用してください。
           </div>
         </div>
       </section>
 
-      <section class="search-panel" id="search">
+      <section class="section-block ward-search-section">
         <div class="container">
-          <form id="search-form" class="search-form">
-            <div class="form-grid">
-              <label class="field">
-                <span>区</span>
-                <select id="wardFilter">
-                  <option value="">すべて</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>国公私立</span>
-                <select id="typeFilter">
-                  <option value="">すべて</option>
-                  <option value="公立">公立</option>
-                  <option value="私立">私立</option>
-                  <option value="国立">国立</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>男女</span>
-                <select id="genderFilter">
-                  <option value="">すべて</option>
-                  <option value="共学">共学</option>
-                  <option value="男子校">男子校</option>
-                  <option value="女子校">女子校</option>
-                </select>
-              </label>
-              <label class="field keyword-field">
-                <span>高校名</span>
-                <input
-                  id="keywordFilter"
-                  type="text"
-                  placeholder="例: ○○高校"
-                  autocomplete="off"
-                />
-              </label>
-            </div>
-            <div class="form-actions">
-              <button type="button" class="ghost-button" id="resetFilters">
-                条件をクリア
-              </button>
-            </div>
-          </form>
+          <div class="section-header">
+            <h2 class="section-title">区から高校を探す</h2>
+            <a class="section-link" href="search.html">条件検索へ →</a>
+          </div>
+          <div class="ward-grid" id="wardGrid"></div>
         </div>
       </section>
 
-      <section class="results">
+      <section class="section-block conditions-section">
         <div class="container">
-          <div class="results-header">
-            <div>
-              <h2>検索結果</h2>
-              <p class="results-count" id="resultsCount">読み込み中...</p>
-            </div>
-            <label class="sort-field">
-              <span>並び替え</span>
-              <select id="sortSelect">
-                <option value="adv-desc">進学偏差値が高い順</option>
-                <option value="adv-asc">進学偏差値が低い順</option>
-                <option value="name-asc">学校名順</option>
-              </select>
-            </label>
+          <div class="section-header">
+            <h2 class="section-title">条件から高校を探す</h2>
+            <a class="section-link" href="search.html">詳しい条件で検索 →</a>
           </div>
-          <div id="resultsList" class="card-grid"></div>
+          <div class="conditions-grid">
+            <a class="condition-card" href="search.html?type=公立">
+              <span class="condition-title">公立高校</span>
+              <span class="condition-note">都立・区立の学校</span>
+            </a>
+            <a class="condition-card" href="search.html?type=私立">
+              <span class="condition-title">私立高校</span>
+              <span class="condition-note">私立校をまとめて検索</span>
+            </a>
+            <a class="condition-card" href="search.html?type=国立">
+              <span class="condition-title">国立高校</span>
+              <span class="condition-note">国立の附属校など</span>
+            </a>
+            <a class="condition-card" href="search.html?gender=共学">
+              <span class="condition-title">共学</span>
+              <span class="condition-note">男女共学の学校</span>
+            </a>
+            <a class="condition-card" href="search.html?gender=男子校">
+              <span class="condition-title">男子校</span>
+              <span class="condition-note">男子校で探す</span>
+            </a>
+            <a class="condition-card" href="search.html?gender=女子校">
+              <span class="condition-title">女子校</span>
+              <span class="condition-note">女子校で探す</span>
+            </a>
+          </div>
         </div>
       </section>
 
-      <section class="about" id="about">
-        <div class="container about-inner">
-          <div class="about-card calculation-card">
-            <h2>算出基準・計算方式</h2>
-            <p>
-              進学偏差値の算出方法やランク分類の考え方をまとめています。詳しい内容は専用ページで確認できます。
-            </p>
-            <a class="primary-link" href="calculation.html">算出基準のページへ →</a>
+      <section class="section-block ranking-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">進学偏差値ランキング</h2>
+            <a class="section-link" href="ward-ranking.html">ランキング一覧 →</a>
           </div>
-          <div class="about-card">
-            <h3>このMVPでできること</h3>
-            <ul>
-              <li>東京23区の学校を条件検索</li>
-              <li>進学偏差値とランク内訳の比較</li>
-              <li>学校属性をカードで俯瞰</li>
-              <li>複数校の比較機能</li>
-              <li>年度別トレンドの可視化</li>
-            </ul>
+          <p class="section-lead">進学偏差値の高い学校を上位から表示します。</p>
+          <div class="ranking-list" id="rankingList"></div>
+        </div>
+      </section>
+
+      <section class="section-block features-section">
+        <div class="container">
+          <h2 class="section-title">特徴から学校を探す</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <h3>進学実績に力を入れている</h3>
+              <p>進学偏差値の高い学校をランキングで確認できます。</p>
+              <a class="text-link" href="ward-ranking.html">ランキングを見る →</a>
+            </div>
+            <div class="feature-card">
+              <h3>区別で比較</h3>
+              <p>同じ区内の学校を比較して選ぶ。</p>
+              <a class="text-link" href="ward-ranking.html">区別ランキングへ →</a>
+            </div>
+            <div class="feature-card">
+              <h3>学校比較を活用</h3>
+              <p>気になる学校を保存して並べて比較できます。</p>
+              <a class="text-link" href="comparison.html">学校比較へ →</a>
+            </div>
           </div>
         </div>
       </section>
+
     </main>
 
     <footer class="site-footer">

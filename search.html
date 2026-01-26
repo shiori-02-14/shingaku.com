@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>学校検索 | 進学偏差値.com</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="data.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="logo" href="index.html" aria-label="トップページへ" title="トップへ">
+          <span class="logo-mark">進学偏差値.com</span>
+          <span class="logo-sub">東京23区 高校情報</span>
+        </a>
+        <nav class="header-nav">
+          <a class="nav-link" href="index.html">トップページ</a>
+          <a class="nav-link is-active" href="search.html">学校検索</a>
+          <a class="nav-link" href="ward-ranking.html">ランキング</a>
+          <a class="nav-link" href="comparison.html" id="comparisonLink">
+            学校比較
+            <span class="comparison-badge" id="comparisonBadge" style="display: none;"></span>
+          </a>
+          <a class="nav-link" href="calculation.html">進学偏差値とは</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- ヒーローセクション -->
+      <section class="hero">
+        <div class="container hero-inner">
+          <p class="eyebrow">学校検索</p>
+          <h1>東京23区の高校を探す</h1>
+          <p class="hero-lead">
+            区・国公私立・男女・高校名で絞り込み、東京23区の学校を一覧で確認できます。
+          </p>
+          <div class="notice">
+            ※本ページの学校データはサンプルです。実データに差し替えて運用してください。
+          </div>
+        </div>
+      </section>
+
+      <!-- 条件から探す -->
+      <section class="search-panel" id="search">
+        <div class="container">
+          <h2 class="section-title">条件から探す</h2>
+          <form id="search-form" class="search-form">
+            <div class="filter-grid">
+              <div class="filter-column">
+                <div class="filter-row">
+                  <label class="filter-label" for="wardFilter">区</label>
+                  <select id="wardFilter" class="filter-control">
+                    <option value="">区を選択</option>
+                  </select>
+                </div>
+                <div
+                  class="filter-row is-multiline"
+                  role="group"
+                  aria-labelledby="typeFilterLabel"
+                >
+                  <span class="filter-label" id="typeFilterLabel">国公私立</span>
+                  <div class="radio-group">
+                    <label class="radio-option">
+                      <input type="radio" name="typeFilter" value="" checked />
+                      <span>すべて</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="typeFilter" value="私立" />
+                      <span>私立</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="typeFilter" value="公立" />
+                      <span>公立</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="typeFilter" value="国立" />
+                      <span>国立</span>
+                    </label>
+                  </div>
+                </div>
+                <div
+                  class="filter-row is-multiline"
+                  role="group"
+                  aria-labelledby="genderFilterLabel"
+                >
+                  <span class="filter-label" id="genderFilterLabel">男女共学</span>
+                  <div class="radio-group">
+                    <label class="radio-option">
+                      <input type="radio" name="genderFilter" value="" checked />
+                      <span>すべて</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="genderFilter" value="男子校" />
+                      <span>男子校</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="genderFilter" value="女子校" />
+                      <span>女子校</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="genderFilter" value="共学" />
+                      <span>共学</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="filter-column">
+                <div class="filter-row">
+                  <span class="filter-label">偏差値</span>
+                  <div class="range-group">
+                    <select
+                      id="scoreMinFilter"
+                      class="filter-control"
+                      aria-label="偏差値 下限"
+                    >
+                      <option value="">下限無し</option>
+                    </select>
+                    <span class="range-separator">〜</span>
+                    <select
+                      id="scoreMaxFilter"
+                      class="filter-control"
+                      aria-label="偏差値 上限"
+                    >
+                      <option value="">上限無し</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="filter-row">
+                  <label class="filter-label" for="keywordFilter">高校名</label>
+                  <input
+                    id="keywordFilter"
+                    class="filter-control"
+                    type="text"
+                    placeholder="例: ○○高校"
+                    autocomplete="off"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="search-button" id="applyFilters">
+                検索
+              </button>
+              <button type="button" class="text-button" id="resetFilters">
+                条件をクリア
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- 検索結果 -->
+      <section class="results">
+        <div class="container">
+          <div class="results-header">
+            <div>
+              <h2 class="section-title">検索結果</h2>
+              <p class="results-count" id="resultsCount">読み込み中...</p>
+            </div>
+            <label class="sort-field">
+              <span>並び替え</span>
+              <select id="sortSelect" data-default="name-asc">
+                <option value="name-asc" selected>学校名順</option>
+                <option value="adv-desc">進学偏差値が高い順</option>
+                <option value="adv-asc">進学偏差値が低い順</option>
+              </select>
+            </label>
+          </div>
+          <div id="resultsList" class="card-grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>進学偏差値.com（MVP）</p>
+        <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+        <p class="footer-credit">© 2026 しおり 🔖</p>
+      </div>
+    </footer>
+  </body>
+</html>
