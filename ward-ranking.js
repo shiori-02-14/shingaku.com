@@ -162,17 +162,18 @@ function createRankCard(school, rank) {
   card.innerHTML = `
     <div class="rank-badge">${rank}</div>
     <div class="rank-info">
-      <h3 class="school-name">
-        ${escapeHtml(school.name)}
-      </h3>
-      <div class="rank-meta">
-        <span>${escapeHtml(school.type)}</span>
-        <span>${escapeHtml(school.gender)}</span>
+      <h3 class="school-name">${escapeHtml(school.name)}</h3>
+      <div class="rank-meta-row">
+        <div class="rank-meta">
+          <span>${escapeHtml(school.ward)}</span>
+          <span>${escapeHtml(school.type)}</span>
+          <span>${escapeHtml(school.gender)}</span>
+        </div>
+        <div class="score">
+          <div class="score-value">${formatScore(school.advScore)}</div>
+          <div class="score-label">進学偏差値</div>
+        </div>
       </div>
-    </div>
-    <div class="score">
-      <div class="score-value">${formatScore(school.advScore)}</div>
-      <div class="score-label">進学偏差値</div>
     </div>
   `;
 
