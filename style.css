@@ -2827,16 +2827,16 @@ h1 {
       "badge score"
       "info info";
     align-items: center;
-    padding: 12px;
-    gap: 8px 12px;
+    padding: 14px;
+    gap: 10px 12px;
   }
 
   .rank-badge {
     grid-area: badge;
-    width: 38px;
-    height: 38px;
-    min-width: 38px;
-    font-size: 15px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    font-size: 16px;
     align-self: center;
   }
 
@@ -2845,41 +2845,42 @@ h1 {
     justify-self: end;
     text-align: right;
     margin-left: 0;
-    padding: 8px 10px;
-    min-width: 110px;
+    padding: 10px 12px;
+    min-width: 120px;
     width: auto;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 2px;
+    gap: 4px;
   }
 
   .rank-card .score-value {
-    font-size: 21px;
+    font-size: 22px;
   }
 
   .rank-card .score-label {
-    font-size: 10px;
+    font-size: 11px;
     margin-top: 0;
   }
 
   .rank-info {
     grid-area: info;
-    gap: 6px;
+    gap: 8px;
   }
 
   .rank-card .school-name {
-    font-size: 15px;
-    line-height: 1.35;
+    font-size: 16px;
+    line-height: 1.45;
   }
 
   .rank-meta {
-    gap: 4px;
+    gap: 6px;
   }
 
   .rank-meta span {
-    font-size: 10px;
-    padding: 2px 6px;
+    font-size: 11px;
+    padding: 3px 8px;
+    line-height: 1.4;
   }
 
   .detail-hero .container {
