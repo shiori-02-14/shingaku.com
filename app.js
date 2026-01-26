@@ -8,6 +8,31 @@ const elements = {};
 const flags = {
   hasSearchUI: false,
 };
+const TOKYO_WARDS = [
+  "千代田区",
+  "中央区",
+  "港区",
+  "新宿区",
+  "文京区",
+  "台東区",
+  "墨田区",
+  "江東区",
+  "品川区",
+  "目黒区",
+  "大田区",
+  "世田谷区",
+  "渋谷区",
+  "中野区",
+  "杉並区",
+  "豊島区",
+  "北区",
+  "荒川区",
+  "板橋区",
+  "練馬区",
+  "足立区",
+  "葛飾区",
+  "江戸川区",
+];
 
 document.addEventListener("DOMContentLoaded", () => {
   cacheElements();
@@ -116,6 +141,10 @@ function getSortedRegions(schools) {
       set.add(region);
     }
   });
+  const prefectureSlug = SchoolData?.getPrefectureSlug?.();
+  if (prefectureSlug === "tokyo") {
+    TOKYO_WARDS.forEach((ward) => set.add(ward));
+  }
   return Array.from(set).sort((a, b) =>
     a.localeCompare(b, "ja", { numeric: true, sensitivity: "base" })
   );

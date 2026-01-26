@@ -830,6 +830,7 @@ const SchoolData = (() => {
 
   return {
     loadSchools,
+    getPrefectureSlug,
   };
 })();
 
