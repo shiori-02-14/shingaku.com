@@ -49,6 +49,7 @@ function cacheElements() {
   elements.applyButton = document.getElementById("applyFilters");
   elements.sortSelect = document.getElementById("sortSelect");
   elements.totalSchools = document.getElementById("totalSchools");
+  elements.regionFilter = document.getElementById("regionFilter");
   elements.wardGrid = document.getElementById("wardGrid");
   elements.rankingList = document.getElementById("rankingList");
 }
@@ -104,23 +105,9 @@ function populateWardOptions() {
 
 function populateScoreOptions() {
   if (!elements.scoreMinFilter || !elements.scoreMaxFilter) return;
-  const scores = state.schools
-    .map((school) => school.advScore)
-    .filter((score) => Number.isFinite(score));
-  if (!scores.length) return;
-  const stats = scores.reduce(
-    (acc, score) => {
-      acc.min = Math.min(acc.min, score);
-      acc.max = Math.max(acc.max, score);
-      return acc;
-    },
-    { min: Infinity, max: -Infinity }
-  );
-  if (!Number.isFinite(stats.min) || !Number.isFinite(stats.max)) return;
-  const minScore = Math.floor(stats.min / 5) * 5;
-  const maxScore = Math.ceil(stats.max / 5) * 5;
+  // みんなの高校情報を参考に、28-78まで1刻みで選択可能にする
   const values = [];
-  for (let value = minScore; value <= maxScore; value += 5) {
+  for (let value = 28; value <= 78; value++) {
     values.push(value);
   }
   fillSelectOptions(elements.scoreMinFilter, "下限無し", values);
@@ -158,6 +145,18 @@ function attachListeners() {
   });
   elements.keywordFilter.addEventListener("input", debounce(updateResults, 200));
   elements.sortSelect.addEventListener("change", updateResults);
+  if (elements.regionFilter) {
+    elements.regionFilter.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-region]");
+      if (!button) return;
+      event.preventDefault();
+      const value = button.dataset.region ?? "";
+      if (elements.wardFilter) {
+        elements.wardFilter.value = value;
+      }
+      updateResults();
+    });
+  }
   if (elements.applyButton) {
     elements.applyButton.addEventListener("click", updateResults);
   }
@@ -228,6 +227,7 @@ function updateResults() {
 
   filtered = sortSchools(filtered, sortMode);
   renderResults(filtered);
+  syncRegionFilterUI();
 }
 
 const nameCollator = new Intl.Collator("ja", {
@@ -291,12 +291,12 @@ function createCard(school) {
 
   card.innerHTML = `
     <div class="card-header">
-      <div>
+      <div class="card-header-main">
         <h3 class="school-name">${escapeHtml(school.name)}</h3>
         <div class="badge-row">
-          <span class="badge">${escapeHtml(school.ward)}</span>
-          <span class="badge">${escapeHtml(school.type)}</span>
-          <span class="badge">${escapeHtml(school.gender)}</span>
+          <span class="badge badge-ward">${escapeHtml(school.ward)}</span>
+          <span class="badge badge-type">${escapeHtml(school.type)}</span>
+          <span class="badge badge-gender">${escapeHtml(school.gender)}</span>
         </div>
       </div>
       <div class="score">
@@ -304,41 +304,45 @@ function createCard(school) {
         <div class="score-label">進学偏差値</div>
       </div>
     </div>
-    <div class="tier-line">
-      ランク内訳: ss ${formatPercent(school.tiers.ss)}% / s ${formatPercent(
-    school.tiers.s
-  )}% / a ${formatPercent(school.tiers.a)}% / b ${formatPercent(
-    school.tiers.b
-  )}% / c ${formatPercent(school.tiers.c)}% / d ${formatPercent(
-    school.tiers.d
-  )}% / e ${formatPercent(school.tiers.e)}%
-    </div>
-    <div class="tier-bar">
-      <span class="tier-ss" style="width:${safeWidth(
-        school.tiers.ss
-      )}%"></span>
-      <span class="tier-s" style="width:${safeWidth(
-        school.tiers.s
-      )}%"></span>
-      <span class="tier-a" style="width:${safeWidth(
-        school.tiers.a
-      )}%"></span>
-      <span class="tier-b" style="width:${safeWidth(
-        school.tiers.b
-      )}%"></span>
-      <span class="tier-c" style="width:${safeWidth(
-        school.tiers.c
-      )}%"></span>
-      <span class="tier-d" style="width:${safeWidth(
-        school.tiers.d
-      )}%"></span>
-      <span class="tier-e" style="width:${safeWidth(
-        school.tiers.e
-      )}%"></span>
-    </div>
-    <div class="destination">
-      <strong>主な合格先</strong>
-      <span class="destination-summary">${destinationText}</span>
+    <div class="card-content">
+      <div class="tier-visual">
+        <div class="tier-bar">
+          <span class="tier-ss" style="width:${safeWidth(
+            school.tiers.ss
+          )}%"></span>
+          <span class="tier-s" style="width:${safeWidth(
+            school.tiers.s
+          )}%"></span>
+          <span class="tier-a" style="width:${safeWidth(
+            school.tiers.a
+          )}%"></span>
+          <span class="tier-b" style="width:${safeWidth(
+            school.tiers.b
+          )}%"></span>
+          <span class="tier-c" style="width:${safeWidth(
+            school.tiers.c
+          )}%"></span>
+          <span class="tier-d" style="width:${safeWidth(
+            school.tiers.d
+          )}%"></span>
+          <span class="tier-e" style="width:${safeWidth(
+            school.tiers.e
+          )}%"></span>
+        </div>
+        <div class="tier-summary">
+          <span class="tier-item">SS ${formatPercent(school.tiers.ss)}%</span>
+          <span class="tier-item">S ${formatPercent(school.tiers.s)}%</span>
+          <span class="tier-item">A ${formatPercent(school.tiers.a)}%</span>
+          <span class="tier-item">B ${formatPercent(school.tiers.b)}%</span>
+          <span class="tier-item">C ${formatPercent(school.tiers.c)}%</span>
+          <span class="tier-item">D ${formatPercent(school.tiers.d)}%</span>
+          <span class="tier-item">E ${formatPercent(school.tiers.e)}%</span>
+        </div>
+      </div>
+      <div class="destination">
+        <strong class="destination-label">主な合格先</strong>
+        <span class="destination-summary">${destinationText}</span>
+      </div>
     </div>
     <div class="card-actions">
       ${
@@ -423,6 +427,20 @@ function resetFilters() {
   updateResults();
 }
 
+function syncRegionFilterUI() {
+  if (!elements.regionFilter || !elements.wardFilter) return;
+  const current = elements.wardFilter.value ?? "";
+  elements.regionFilter.querySelectorAll("[data-region]").forEach((button) => {
+    const isActive = button.dataset.region === current;
+    button.classList.toggle("is-active", isActive);
+    if (isActive) {
+      button.setAttribute("aria-current", "true");
+    } else {
+      button.removeAttribute("aria-current");
+    }
+  });
+}
+
 function renderError(message) {
   if (!elements.resultsList || !elements.resultsCount) return;
   elements.resultsList.innerHTML = "";
@@ -450,9 +468,16 @@ function formatDestinationSummary(destinations) {
   if (!destinations || !destinations.length) {
     return "-";
   }
-  return destinations
+  // 合格者数でソートしてTOP5まで表示（残りはetc...）
+  const sorted = [...destinations].sort((a, b) => (b.count || 0) - (a.count || 0));
+  const topFive = sorted.slice(0, 5);
+  const summary = topFive
     .map((item) => `${escapeHtml(item.name)} ${formatCount(item.count)}名`)
     .join(" / ");
+  if (sorted.length > 5) {
+    return `${summary} / etc...`;
+  }
+  return summary;
 }
 
 function formatCount(value) {

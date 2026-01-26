@@ -313,16 +313,17 @@ const SchoolData = (() => {
 
   const UNIVERSITY_TIER_MAP = buildUniversityTierMap(UNIVERSITY_GROUPS);
   const DEFAULT_TIER = "e";
+  const DEFAULT_PREFECTURE = "tokyo";
 
   const SAMPLE_CSV = `year,slug,school_name,homepage_url,ward,type,gender,destinations,destinations_file,notes
-2025,adachi-gakuen,足立学園高等学校,https://www.adachigakuen-jh.ed.jp/,足立区,私立,男子校,麗澤大学:80|日本大学:76|千葉工業大学:44,data/destinations/adachi-gakuen.csv,2025合格実績
-2025,meiji-fuzoku-nakano,明治大学付属中野高等学校,https://www.nakanogakuen.ac.jp/,中野区,私立,男子校,明治大学:328|東京理科大学:21|早稲田大学:16,data/destinations/meiji-fuzoku-nakano.csv,2025進路状況
-2025,tokyo-gakugei-fuzoku,東京学芸大学附属高等学校,https://www.gakugei-hs.setagaya.tokyo.jp/,世田谷区,国立,共学,早稲田大学:97|明治大学:84|東京理科大学:82,data/destinations/tokyo-gakugei-fuzoku.csv,2025進路状況（学部合算）
-2025,kaisei,開成高等学校,https://kaiseigakuen.jp/,荒川区,私立,男子校,早稲田大学:257|慶應義塾大学:172|東京大学:150,data/destinations/kaisei.csv,2025進路状況（開成高校PDF）`;
+2025,adachi-gakuen,足立学園高等学校,https://www.adachigakuen-jh.ed.jp/,足立区,私立,男子校,麗澤大学:80|日本大学:76|千葉工業大学:44,destinations/adachi-gakuen.csv,2025合格実績
+2025,meiji-fuzoku-nakano,明治大学付属中野高等学校,https://www.nakanogakuen.ac.jp/,中野区,私立,男子校,明治大学:328|東京理科大学:21|早稲田大学:16,destinations/meiji-fuzoku-nakano.csv,2025進路状況
+2025,tokyo-gakugei-fuzoku,東京学芸大学附属高等学校,https://www.gakugei-hs.setagaya.tokyo.jp/,世田谷区,国立,共学,早稲田大学:97|明治大学:84|東京理科大学:82,destinations/tokyo-gakugei-fuzoku.csv,2025進路状況（学部合算）
+2025,kaisei,開成高等学校,https://kaiseigakuen.jp/,荒川区,私立,男子校,早稲田大学:257|慶應義塾大学:172|東京大学:150,destinations/kaisei.csv,2025進路状況（開成高校PDF）`;
 
   const DESTINATIONS_FALLBACK = new Map([
     [
-      "data/destinations/adachi-gakuen.csv",
+      "destinations/adachi-gakuen.csv",
       `year,name,count,is_overseas,category
 2025,麗澤大学,80,,
 2025,日本大学,76,,
@@ -418,7 +419,7 @@ const SchoolData = (() => {
 2025,麻布大学,1,,`
     ],
     [
-      "data/destinations/meiji-fuzoku-nakano.csv",
+      "destinations/meiji-fuzoku-nakano.csv",
       `year,name,count,is_overseas,category
 2025,明治大学,328,,
 2025,東京理科大学,21,,
@@ -462,7 +463,7 @@ const SchoolData = (() => {
 2025,駒澤大学,1,,`
     ],
     [
-      "data/destinations/tokyo-gakugei-fuzoku.csv",
+      "destinations/tokyo-gakugei-fuzoku.csv",
       `year,name,count,is_overseas,category
 2025,早稲田大学,97,,
 2025,明治大学,84,,
@@ -603,7 +604,7 @@ const SchoolData = (() => {
 2025,高崎経済大学,1,,`
     ],
     [
-      "data/destinations/kaisei.csv",
+      "destinations/kaisei.csv",
       `year,name,count,is_overseas,category
 2025,早稲田大学,257,,
 2025,慶應義塾大学,172,,
@@ -1191,9 +1192,23 @@ const SchoolData = (() => {
     });
   }
 
+  function getPrefectureSlug() {
+    const params = new URLSearchParams(window.location.search);
+    const raw =
+      params.get("pref") ||
+      params.get("prefecture") ||
+      params.get("region") ||
+      DEFAULT_PREFECTURE;
+    const normalized = String(raw || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "");
+    return normalized || DEFAULT_PREFECTURE;
+  }
+
   function getDataPath() {
     const path = window.location.pathname;
-    return path.includes("/schools/") ? "../data/schools.csv" : "data/schools.csv";
+    const base = `data/prefectures/${getPrefectureSlug()}/schools.csv`;
+    return path.includes("/schools/") ? `../${base}` : base;
   }
 
   return {

@@ -401,7 +401,7 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
     elements.destinationsPublicSection.style.display = "";
     renderDestinationList(
       categorized.public,
-      publicTotal,
+      total,
       elements.destinationsPublicList
     );
   }
@@ -414,7 +414,7 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
     elements.destinationsPrivateSection.style.display = "";
     renderDestinationList(
       categorized.private,
-      privateTotal,
+      total,
       elements.destinationsPrivateList
     );
   }
@@ -427,7 +427,7 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
     elements.destinationsMedicalSection.style.display = "";
     renderDestinationList(
       categorized.medical,
-      medicalTotal,
+      total,
       elements.destinationsMedicalList
     );
   }
@@ -440,7 +440,7 @@ function renderDestinations(destinations, yearLabel, isAvailable = true) {
     elements.destinationsOverseasSection.style.display = "";
     renderDestinationList(
       categorized.overseas,
-      overseasTotal,
+      total,
       elements.destinationsOverseasList
     );
   }
@@ -454,8 +454,11 @@ function updateDestinationTitle(target, label, total) {
 
 function renderDestinationList(items, total, target) {
   if (!target) return;
+  // 合格者数でソートして全件表示（詳細ページでは全件表示）
+  const sorted = [...items]
+    .sort((a, b) => (b.count || 0) - (a.count || 0));
   const fragment = document.createDocumentFragment();
-  items.forEach((item) => {
+  sorted.forEach((item) => {
     const li = document.createElement("li");
     li.className = "destination-item";
     const ratio = total ? Math.round((item.count / total) * 100) : 0;

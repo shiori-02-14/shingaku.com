@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>進学偏差値.com | 東京23区 高校情報</title>
+    <title>進学偏差値.com | 全国 高校情報</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="data.js" defer></script>
@@ -14,7 +14,7 @@
       <div class="container header-inner">
         <a class="logo" href="index.html" aria-label="トップページへ" title="トップへ">
           <span class="logo-mark">進学偏差値.com</span>
-          <span class="logo-sub">東京23区 高校情報</span>
+          <span class="logo-sub">全国 高校情報</span>
         </a>
         <nav class="header-nav">
           <a class="nav-link is-active" href="index.html">トップページ</a>
@@ -32,8 +32,8 @@
     <main>
       <section class="hero">
         <div class="container hero-inner">
-          <p class="eyebrow">東京23区 高校情報</p>
-          <h1>東京23区の高校情報をまとめて検索</h1>
+          <p class="eyebrow">全国 高校情報</p>
+          <h1>全国の高校情報をまとめて検索</h1>
           <p class="hero-lead">
             進学偏差値は、合格実績のランク分布から簡易算出した指標です。単純な偏差値に
             依存しない比較軸として、合格実績の傾向を可視化します。
@@ -49,11 +49,11 @@
             </div>
             <div class="stat-item">
               <span class="stat-number">23</span>
-              <span class="stat-label">区</span>
+              <span class="stat-label">掲載エリア数</span>
             </div>
           </div>
           <div class="notice">
-            ※本ページの学校データはサンプルです。実データに差し替えて運用してください。
+            ※現在は東京23区のサンプルデータです。全国対応に向けて拡充予定です。
           </div>
         </div>
       </section>
@@ -61,9 +61,10 @@
       <section class="section-block ward-search-section">
         <div class="container">
           <div class="section-header">
-            <h2 class="section-title">区から高校を探す</h2>
+            <h2 class="section-title">地域から高校を探す</h2>
             <a class="section-link" href="search.html">条件検索へ →</a>
           </div>
+          <p class="section-lead">地域別に高校を検索できます。</p>
           <div class="ward-grid" id="wardGrid"></div>
         </div>
       </section>
@@ -77,7 +78,7 @@
           <div class="conditions-grid">
             <a class="condition-card" href="search.html?type=公立">
               <span class="condition-title">公立高校</span>
-              <span class="condition-note">都立・区立の学校</span>
+              <span class="condition-note">公立の学校</span>
             </a>
             <a class="condition-card" href="search.html?type=私立">
               <span class="condition-title">私立高校</span>
@@ -120,18 +121,23 @@
           <div class="features-grid">
             <div class="feature-card">
               <h3>進学実績に力を入れている</h3>
-              <p>進学偏差値の高い学校をランキングで確認できます。</p>
+              <p>進学偏差値の高い学校をランキングで確認できます。合格実績の傾向から、進学力の高い学校を見つけられます。</p>
               <a class="text-link" href="ward-ranking.html">ランキングを見る →</a>
             </div>
             <div class="feature-card">
-              <h3>区別で比較</h3>
-              <p>同じ区内の学校を比較して選ぶ。</p>
-              <a class="text-link" href="ward-ranking.html">区別ランキングへ →</a>
+              <h3>地域別で比較</h3>
+              <p>同じ地域内の学校を比較して選ぶ。通学圏内の学校を効率的に探せます。</p>
+              <a class="text-link" href="ward-ranking.html">地域別ランキングへ →</a>
             </div>
             <div class="feature-card">
               <h3>学校比較を活用</h3>
-              <p>気になる学校を保存して並べて比較できます。</p>
+              <p>気になる学校を保存して並べて比較できます。最大5校まで比較可能です。</p>
               <a class="text-link" href="comparison.html">学校比較へ →</a>
+            </div>
+            <div class="feature-card">
+              <h3>条件から学校を探す</h3>
+              <p>国公私立・男女別・偏差値など、様々な条件で学校を検索できます。地域、学校種別、男女共学、進学偏差値の範囲を指定して、希望に合った学校を見つけられます。</p>
+              <a class="text-link" href="search.html">学校検索へ →</a>
             </div>
           </div>
         </div>

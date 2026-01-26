@@ -70,8 +70,8 @@ function updateRanking() {
   const ward = elements.wardSelect.value;
   const gender = elements.genderSelect.value;
   if (!ward) {
-    elements.rankingCount.textContent = "区を選択してください";
-    renderMessage("区を選ぶとランキングが表示されます。");
+    elements.rankingCount.textContent = "地域を選択してください";
+    renderMessage("地域を選ぶとランキングが表示されます。");
     return;
   }
 
