@@ -89,7 +89,7 @@ strong {
   justify-content: space-between;
   padding: 10px 24px;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 @media (min-width: 768px) {
@@ -101,14 +101,17 @@ strong {
 
 .logo {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .logo-mark {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #1b4f9c;
   line-height: 1.2;
@@ -121,8 +124,15 @@ strong {
 }
 
 .logo-sub {
-  font-size: 12px;
+  font-size: 11px;
   color: #6b7a90;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .logo-sub {
+    font-size: 12px;
+  }
 }
 
 .logo:hover {
@@ -160,9 +170,18 @@ body.is-reloading main {
 
 .header-nav {
   display: flex;
-  gap: 10px 18px;
-  flex-wrap: wrap;
-  font-size: 14px;
+  gap: 8px 12px;
+  flex-wrap: nowrap;
+  font-size: 13px;
+  align-items: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.header-nav::-webkit-scrollbar {
+  display: none;
 }
 
 @media (min-width: 768px) {
@@ -173,15 +192,17 @@ body.is-reloading main {
 }
 
 .nav-link {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--color-muted);
-  padding: 8px 10px;
+  padding: 6px 8px;
   border-radius: var(--radius-button);
   font-weight: 500;
   transition: all 0.2s ease;
   display: inline-block;
   -webkit-tap-highlight-color: transparent;
   line-height: 1.4;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-link:active {
@@ -376,6 +397,14 @@ h1 {
   line-height: 1.8;
 }
 
+@media (max-width: 640px) {
+  .section-lead {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
 .section-link,
 .text-link {
   color: var(--color-accent);
@@ -391,21 +420,23 @@ h1 {
 
 .ward-grid {
   display: grid;
-  gap: var(--spacing-sm);
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
 }
 
 .ward-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-soft);
-  padding: var(--spacing-sm) var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
   text-align: center;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
   box-shadow: var(--shadow-soft);
   transition: all 0.2s ease;
+  min-height: 80px;
+  justify-content: center;
 }
 
 .ward-card:hover {
@@ -415,13 +446,15 @@ h1 {
 }
 
 .ward-name {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .ward-count {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--color-muted);
+  line-height: 1.4;
 }
 
 /* 地域フィルター（あいうえお順） */
@@ -3120,8 +3153,9 @@ h1 {
   }
 
   .section-title {
-    font-size: 19px;
+    font-size: 20px;
     margin-bottom: var(--spacing-md);
+    line-height: 1.5;
   }
 
   .filter-row {
@@ -3142,8 +3176,22 @@ h1 {
   }
 
   .ward-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--spacing-sm);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-md);
+  }
+
+  .ward-card {
+    padding: var(--spacing-lg) var(--spacing-md);
+    min-height: 90px;
+  }
+
+  .ward-name {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .ward-count {
+    font-size: 14px;
   }
 
   .conditions-grid {
@@ -3157,28 +3205,34 @@ h1 {
   }
 
   .header-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-sm);
+    padding: 8px 16px;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .logo {
+    flex-shrink: 0;
+  }
+
+  .logo-mark {
+    font-size: 16px;
+  }
+
+  .logo-sub {
+    font-size: 10px;
   }
 
   .header-nav {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px 12px;
-    align-items: center;
+    flex-shrink: 0;
+    gap: 6px 8px;
+    font-size: 12px;
   }
 
   .nav-link {
-    padding: 8px 10px;
+    padding: 6px 8px;
     font-size: 12px;
-    width: 100%;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
   }
 
   .hero-inner {
