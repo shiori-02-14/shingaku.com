@@ -70,6 +70,7 @@ function cacheElements() {
   elements.wardFilter = document.getElementById("wardFilter");
   elements.typeFilters = document.querySelectorAll('input[name="typeFilter"]');
   elements.genderFilters = document.querySelectorAll('input[name="genderFilter"]');
+  elements.rankFilters = document.querySelectorAll('input[name="rankFilter"]');
   elements.keywordFilter = document.getElementById("keywordFilter");
   elements.scoreMinFilter = document.getElementById("scoreMinFilter");
   elements.scoreMaxFilter = document.getElementById("scoreMaxFilter");
@@ -80,12 +81,15 @@ function cacheElements() {
   elements.sortSelect = document.getElementById("sortSelect");
   elements.totalSchools = document.getElementById("totalSchools");
   elements.regionFilter = document.getElementById("regionFilter");
+  elements.locationFilter = document.getElementById("locationFilter");
   elements.wardGrid = document.getElementById("wardGrid");
   elements.rankingList = document.getElementById("rankingList");
   elements.rankingListOverall = document.getElementById("rankingListOverall");
   elements.rankingListBoys = document.getElementById("rankingListBoys");
   elements.rankingListGirls = document.getElementById("rankingListGirls");
   elements.rankingListCoed = document.getElementById("rankingListCoed");
+  elements.toggleButton = document.getElementById("toggleSearchForm");
+  elements.detailedSearchForm = document.querySelector(".detailed-search-form");
 }
 
 function hasRankingLists() {
@@ -101,8 +105,8 @@ function hasRankingLists() {
 function hasSearchUI() {
   return Boolean(
     elements.wardFilter &&
-      elements.typeFilters?.length &&
-      elements.genderFilters?.length &&
+      (elements.typeFilters?.length || document.querySelectorAll('input[name="typeFilter"]').length) &&
+      (elements.genderFilters?.length || document.querySelectorAll('input[name="genderFilter"]').length) &&
       elements.keywordFilter &&
       elements.scoreMinFilter &&
       elements.scoreMaxFilter &&
@@ -212,6 +216,82 @@ function renderRegionFilter(regions = []) {
   body.appendChild(group);
 }
 
+// 地域フィルターを階層的に表示（詳細検索フォーム用）
+const REGION_GROUPS = {
+  "北海道地方": ["北海道"],
+  "東北地方": ["青森県", "岩手県", "宮城県", "秋田県", "山形県", "福島県"],
+  "関東地方": ["茨城県", "栃木県", "群馬県", "埼玉県", "千葉県", "東京都", "神奈川県"],
+  "中部地方": ["新潟県", "富山県", "石川県", "福井県", "山梨県", "長野県", "岐阜県", "静岡県", "愛知県"],
+  "近畿地方": ["三重県", "滋賀県", "京都府", "大阪府", "兵庫県", "奈良県", "和歌山県"],
+  "中国地方": ["鳥取県", "島根県", "岡山県", "広島県", "山口県"],
+  "四国地方": ["徳島県", "香川県", "愛媛県", "高知県"],
+  "九州地方": ["福岡県", "佐賀県", "長崎県", "熊本県", "大分県", "宮崎県", "鹿児島県", "沖縄県"],
+  "海外": ["海外"]
+};
+
+function renderLocationFilter(regions = []) {
+  if (!elements.locationFilter) return;
+  elements.locationFilter.innerHTML = "";
+
+  if (!regions.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = "地域データがありません。";
+    elements.locationFilter.appendChild(empty);
+    return;
+  }
+
+  // 地域ごとにグループ化
+  Object.entries(REGION_GROUPS).forEach(([regionName, prefectures]) => {
+    // この地域に該当する都道府県があるかチェック
+    const hasRegion = prefectures.some(pref => regions.includes(pref));
+    if (!hasRegion) return;
+
+    const regionGroup = document.createElement("div");
+    regionGroup.className = "location-region-group";
+
+    const regionTitle = document.createElement("div");
+    regionTitle.className = "location-region-title";
+    regionTitle.textContent = regionName;
+    regionGroup.appendChild(regionTitle);
+
+    const prefectureContainer = document.createElement("div");
+    prefectureContainer.className = "location-prefectures";
+
+    prefectures.forEach((pref) => {
+      if (!regions.includes(pref)) return;
+
+      const label = document.createElement("label");
+      label.className = "location-prefecture";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.name = "wardFilter";
+      checkbox.value = pref;
+
+      const span = document.createElement("span");
+      span.textContent = pref;
+
+      label.appendChild(checkbox);
+      label.appendChild(span);
+      prefectureContainer.appendChild(label);
+    });
+
+    if (prefectureContainer.children.length > 0) {
+      regionGroup.appendChild(prefectureContainer);
+      elements.locationFilter.appendChild(regionGroup);
+    }
+  });
+}
+
+function syncLocationFilterUI() {
+  if (!elements.locationFilter || !elements.wardFilter) return;
+  const current = elements.wardFilter.value ?? "";
+  elements.locationFilter.querySelectorAll('input[name="wardFilter"]').forEach((checkbox) => {
+    checkbox.checked = checkbox.value === current;
+  });
+}
+
 function populateScoreOptions() {
   if (!elements.scoreMinFilter || !elements.scoreMaxFilter) return;
   // みんなの高校情報を参考に、28-78まで1刻みで選択可能にする
@@ -241,19 +321,67 @@ function fillSelectOptions(select, placeholder, values) {
 
 function attachListeners() {
   if (!flags.hasSearchUI) return;
+  
+  // 展開/折りたたみ機能
+  if (elements.toggleButton && elements.detailedSearchForm) {
+    elements.toggleButton.addEventListener("click", () => {
+      const isExpanded = elements.toggleButton.getAttribute("aria-expanded") === "true";
+      elements.detailedSearchForm.style.display = isExpanded ? "none" : "block";
+      elements.toggleButton.setAttribute("aria-expanded", !isExpanded);
+      elements.toggleButton.setAttribute("aria-label", isExpanded ? "検索フォームを展開" : "検索フォームを折りたたむ");
+    });
+  }
+
   [elements.wardFilter, elements.scoreMinFilter, elements.scoreMaxFilter].forEach(
     (select) => {
-      select.addEventListener("change", updateResults);
+      if (select) select.addEventListener("change", updateResults);
     }
   );
-  elements.typeFilters.forEach((radio) => {
-    radio.addEventListener("change", updateResults);
-  });
-  elements.genderFilters.forEach((radio) => {
-    radio.addEventListener("change", updateResults);
-  });
+  
+  // チェックボックス検索（新しい詳細検索フォーム用）
+  const typeCheckboxes = document.querySelectorAll('input[name="typeFilter"][type="checkbox"]');
+  const genderCheckboxes = document.querySelectorAll('input[name="genderFilter"][type="checkbox"]');
+  const rankCheckboxes = document.querySelectorAll('input[name="rankFilter"]');
+  
+  if (typeCheckboxes.length > 0) {
+    typeCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", updateResults);
+    });
+  } else if (elements.typeFilters?.length) {
+    elements.typeFilters.forEach((radio) => {
+      radio.addEventListener("change", updateResults);
+    });
+  }
+  
+  if (genderCheckboxes.length > 0) {
+    genderCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", updateResults);
+    });
+  } else if (elements.genderFilters?.length) {
+    elements.genderFilters.forEach((radio) => {
+      radio.addEventListener("change", updateResults);
+    });
+  }
+  
+  if (rankCheckboxes.length > 0) {
+    rankCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", updateResults);
+    });
+  }
+  
+  // 地域チェックボックス
+  if (elements.locationFilter) {
+    elements.locationFilter.addEventListener("change", (event) => {
+      if (event.target.type === "checkbox" && event.target.name === "wardFilter") {
+        updateWardFilterFromCheckboxes();
+        updateResults();
+      }
+    });
+  }
+  
   elements.keywordFilter.addEventListener("input", debounce(updateResults, 200));
   elements.sortSelect.addEventListener("change", updateResults);
+  
   if (elements.regionFilter) {
     elements.regionFilter.addEventListener("click", (event) => {
       const button = event.target.closest("[data-region]");
@@ -266,6 +394,7 @@ function attachListeners() {
       updateResults();
     });
   }
+  
   if (elements.applyButton) {
     elements.applyButton.addEventListener("click", updateResults);
   }
@@ -279,6 +408,7 @@ async function loadSchools() {
     if (hasSearchUI()) {
       populateWardOptions(state.regions);
       renderRegionFilter(state.regions);
+      renderLocationFilter(state.regions);
     }
     if (!state.schools.length) {
       if (hasSearchUI()) {
@@ -313,10 +443,34 @@ async function loadSchools() {
   }
 }
 
+function getScoreRank(score) {
+  if (!Number.isFinite(score)) return null;
+  if (score >= 75) return "SSS";
+  if (score >= 70) return "SS";
+  if (score >= 65) return "S";
+  if (score >= 60) return "A";
+  if (score >= 55) return "B";
+  if (score >= 50) return "C";
+  if (score >= 45) return "D";
+  if (score >= 40) return "E";
+  return "F";
+}
+
+function updateWardFilterFromCheckboxes() {
+  if (!elements.wardFilter || !elements.locationFilter) return;
+  const checked = Array.from(elements.locationFilter.querySelectorAll('input[name="wardFilter"]:checked'));
+  if (checked.length === 0) {
+    elements.wardFilter.value = "";
+  } else if (checked.length === 1) {
+    elements.wardFilter.value = checked[0].value;
+  } else {
+    // 複数選択の場合は最初の値を設定（後でフィルタリング時に複数対応）
+    elements.wardFilter.value = checked[0].value;
+  }
+}
+
 function updateResults() {
   const ward = elements.wardFilter.value;
-  const type = getCheckedValue(elements.typeFilters);
-  const gender = getCheckedValue(elements.genderFilters);
   const keyword = normalizeText(elements.keywordFilter.value);
   const sortMode = elements.sortSelect.value;
   const rawMin = parseFilterNumber(elements.scoreMinFilter.value);
@@ -327,22 +481,60 @@ function updateResults() {
     [scoreMin, scoreMax] = [scoreMax, scoreMin];
   }
 
+  // チェックボックス検索（新しい詳細検索フォーム用）
+  const typeCheckboxes = document.querySelectorAll('input[name="typeFilter"][type="checkbox"]:checked');
+  const genderCheckboxes = document.querySelectorAll('input[name="genderFilter"][type="checkbox"]:checked');
+  const rankCheckboxes = document.querySelectorAll('input[name="rankFilter"]:checked');
+  const wardCheckboxes = elements.locationFilter ? elements.locationFilter.querySelectorAll('input[name="wardFilter"]:checked') : [];
+  
+  const selectedTypes = typeCheckboxes.length > 0 ? Array.from(typeCheckboxes).map(cb => cb.value) : null;
+  const selectedGenders = genderCheckboxes.length > 0 ? Array.from(genderCheckboxes).map(cb => cb.value) : null;
+  const selectedRanks = rankCheckboxes.length > 0 ? Array.from(rankCheckboxes).map(cb => cb.value) : null;
+  const selectedWards = wardCheckboxes.length > 0 ? Array.from(wardCheckboxes).map(cb => cb.value) : null;
+  
+  // ラジオボタン検索（旧フォーム用）
+  const type = getCheckedValue(elements.typeFilters);
+  const gender = getCheckedValue(elements.genderFilters);
+
   let filtered = state.schools.filter((school) => {
-    if (ward && school.ward !== ward) return false;
-    if (type && school.type !== type) return false;
-    if (gender && school.gender !== gender) return false;
+    // 地域フィルター（チェックボックス優先）
+    if (selectedWards && selectedWards.length > 0) {
+      if (!selectedWards.includes(school.ward)) return false;
+    } else if (ward && school.ward !== ward) return false;
+    
+    // 国公私立フィルター（チェックボックス優先）
+    if (selectedTypes && selectedTypes.length > 0) {
+      if (!selectedTypes.includes(school.type)) return false;
+    } else if (type && school.type !== type) return false;
+    
+    // 男女共学フィルター（チェックボックス優先）
+    if (selectedGenders && selectedGenders.length > 0) {
+      if (!selectedGenders.includes(school.gender)) return false;
+    } else if (gender && school.gender !== gender) return false;
+    
+    // 進学偏差値ランクフィルター
+    if (selectedRanks && selectedRanks.length > 0) {
+      const schoolRank = getScoreRank(school.advScore);
+      if (!schoolRank || !selectedRanks.includes(schoolRank)) return false;
+    }
+    
+    // 高校名フィルター
     if (keyword && !normalizeText(school.name).includes(keyword)) return false;
+    
+    // 偏差値範囲フィルター
     if (scoreMin != null || scoreMax != null) {
       if (!Number.isFinite(school.advScore)) return false;
       if (scoreMin != null && school.advScore < scoreMin) return false;
       if (scoreMax != null && school.advScore > scoreMax) return false;
     }
+    
     return true;
   });
 
   filtered = sortSchools(filtered, sortMode);
   renderResults(filtered);
   syncRegionFilterUI();
+  syncLocationFilterUI();
 }
 
 const nameCollator = new Intl.Collator("ja", {
@@ -539,6 +731,15 @@ function resetFilters() {
   elements.scoreMinFilter.value = "";
   elements.scoreMaxFilter.value = "";
   elements.sortSelect.value = getDefaultSortValue();
+  
+  // チェックボックスをリセット
+  document.querySelectorAll('input[name="typeFilter"][type="checkbox"]').forEach(cb => cb.checked = false);
+  document.querySelectorAll('input[name="genderFilter"][type="checkbox"]').forEach(cb => cb.checked = false);
+  document.querySelectorAll('input[name="rankFilter"]').forEach(cb => cb.checked = false);
+  if (elements.locationFilter) {
+    elements.locationFilter.querySelectorAll('input[name="wardFilter"]').forEach(cb => cb.checked = false);
+  }
+  
   updateResults();
 }
 

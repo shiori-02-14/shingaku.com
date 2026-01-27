@@ -43,113 +43,148 @@
         </div>
       </section>
 
-      <!-- 条件から探す -->
+      <!-- 詳細検索 -->
       <section class="search-panel" id="search">
         <div class="container">
-          <h2 class="section-title">条件から探す</h2>
-          <form id="search-form" class="search-form">
-            <table class="filter-table">
-              <tbody>
-                <tr>
-                  <th><label for="wardFilter">地域</label></th>
-                  <td>
-                    <select id="wardFilter" class="filter-control visually-hidden" aria-label="地域">
-                      <option value="">地域を選択</option>
-                    </select>
-                    <div class="region-filter" id="regionFilter">
-                      <div class="region-filter-header">地域一覧</div>
-                      <div class="region-filter-body"></div>
-                    </div>
-                  </td>
-                  <th><label for="scoreMinFilter">偏差値</label></th>
-                  <td>
-                    <div class="range-group">
-                      <select
-                        id="scoreMinFilter"
-                        class="filter-control"
-                        aria-label="偏差値 下限"
-                      >
-                        <option value="">下限無し</option>
-                      </select>
-                      <span class="range-separator">〜</span>
-                      <select
-                        id="scoreMaxFilter"
-                        class="filter-control"
-                        aria-label="偏差値 上限"
-                      >
-                        <option value="">上限無し</option>
-                      </select>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th><span id="typeFilterLabel">国公私立</span></th>
-                  <td>
-                    <div class="radio-group">
-                      <label class="radio-option">
-                        <input type="radio" name="typeFilter" value="" checked />
-                        <span>すべて</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="typeFilter" value="私立" />
-                        <span>私立</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="typeFilter" value="公立" />
-                        <span>公立</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="typeFilter" value="国立" />
-                        <span>国立</span>
-                      </label>
-                    </div>
-                  </td>
-                  <th><label for="keywordFilter">高校名</label></th>
-                  <td>
-                    <input
-                      id="keywordFilter"
-                      class="filter-control"
-                      type="text"
-                      placeholder="例: ○○高校"
-                      autocomplete="off"
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <th><span id="genderFilterLabel">男女共学</span></th>
-                  <td>
-                    <div class="radio-group">
-                      <label class="radio-option">
-                        <input type="radio" name="genderFilter" value="" checked />
-                        <span>すべて</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="genderFilter" value="男子校" />
-                        <span>男子校</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="genderFilter" value="女子校" />
-                        <span>女子校</span>
-                      </label>
-                      <label class="radio-option">
-                        <input type="radio" name="genderFilter" value="共学" />
-                        <span>共学</span>
-                      </label>
-                    </div>
-                  </td>
-                  <td colspan="2"></td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="form-actions">
-              <button type="button" class="search-button" id="applyFilters">
-                検索
-              </button>
-              <button type="button" class="text-button" id="resetFilters">
-                条件をクリア
+          <div class="detailed-search">
+            <div class="detailed-search-header">
+              <div class="detailed-search-title">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M19 19L14.65 14.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>詳細検索</span>
+              </div>
+              <button type="button" class="toggle-button" id="toggleSearchForm" aria-expanded="true" aria-label="検索フォームを折りたたむ">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
               </button>
             </div>
-          </form>
+            <form id="search-form" class="detailed-search-form" style="display: block;">
+              <!-- 高校名 -->
+              <div class="search-section">
+                <label class="search-section-label">高校名</label>
+                <input
+                  id="keywordFilter"
+                  class="search-input"
+                  type="text"
+                  placeholder="例：○○高校"
+                  autocomplete="off"
+                />
+              </div>
+
+              <!-- 進学偏差値ランク -->
+              <div class="search-section">
+                <label class="search-section-label">進学偏差値ランク</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="SSS" />
+                    <span>SSS</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="SS" />
+                    <span>SS</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="S" />
+                    <span>S</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="A" />
+                    <span>A</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="B" />
+                    <span>B</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="C" />
+                    <span>C</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="D" />
+                    <span>D</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="E" />
+                    <span>E</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="rankFilter" value="F" />
+                    <span>F</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 国公私立 -->
+              <div class="search-section">
+                <label class="search-section-label">国公私立</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="typeFilter" value="国立" />
+                    <span>国立</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="typeFilter" value="公立" />
+                    <span>公立</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="typeFilter" value="私立" />
+                    <span>私立</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 男女共学 -->
+              <div class="search-section">
+                <label class="search-section-label">男女共学</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="genderFilter" value="共学" />
+                    <span>共学</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="genderFilter" value="男子校" />
+                    <span>男子校</span>
+                  </label>
+                  <label class="checkbox-option">
+                    <input type="checkbox" name="genderFilter" value="女子校" />
+                    <span>女子校</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 勤務地（地域） -->
+              <div class="search-section">
+                <label class="search-section-label">勤務地</label>
+                <div class="location-filter" id="locationFilter">
+                  <!-- JavaScriptで動的に生成 -->
+                </div>
+              </div>
+
+              <!-- 偏差値範囲（隠しフィールドとして保持） -->
+              <select id="wardFilter" class="visually-hidden" aria-label="地域">
+                <option value="">地域を選択</option>
+              </select>
+              <select id="scoreMinFilter" class="visually-hidden" aria-label="偏差値 下限">
+                <option value="">下限無し</option>
+              </select>
+              <select id="scoreMaxFilter" class="visually-hidden" aria-label="偏差値 上限">
+                <option value="">上限無し</option>
+              </select>
+
+              <!-- ボタン -->
+              <div class="form-actions">
+                <button type="button" class="search-button" id="applyFilters">
+                  検索
+                </button>
+                <button type="button" class="reset-button" id="resetFilters">
+                  リセット
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </section>
 
