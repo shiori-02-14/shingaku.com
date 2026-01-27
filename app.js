@@ -70,7 +70,6 @@ function cacheElements() {
   elements.wardFilter = document.getElementById("wardFilter");
   elements.typeFilters = document.querySelectorAll('input[name="typeFilter"]');
   elements.genderFilters = document.querySelectorAll('input[name="genderFilter"]');
-  elements.rankFilters = document.querySelectorAll('input[name="rankFilter"]');
   elements.keywordFilter = document.getElementById("keywordFilter");
   elements.scoreMinFilter = document.getElementById("scoreMinFilter");
   elements.scoreMaxFilter = document.getElementById("scoreMaxFilter");
@@ -241,11 +240,19 @@ function renderLocationFilter(regions = []) {
     return;
   }
 
+  // 東京都の区を取得
+  const tokyoWardsInData = TOKYO_WARDS.filter(ward => regions.includes(ward));
+  const hasTokyo = regions.includes("東京都") || tokyoWardsInData.length > 0;
+
   // 地域ごとにグループ化
   Object.entries(REGION_GROUPS).forEach(([regionName, prefectures]) => {
-    // この地域に該当する都道府県があるかチェック
-    const hasRegion = prefectures.some(pref => regions.includes(pref));
-    if (!hasRegion) return;
+    // この地域に該当する都道府県があるかチェック（東京都の区は除外）
+    const prefecturesInRegion = prefectures.filter(pref => {
+      if (pref === "東京都") return hasTokyo;
+      return regions.includes(pref);
+    });
+    
+    if (prefecturesInRegion.length === 0) return;
 
     const regionGroup = document.createElement("div");
     regionGroup.className = "location-region-group";
@@ -258,26 +265,77 @@ function renderLocationFilter(regions = []) {
     const prefectureContainer = document.createElement("div");
     prefectureContainer.className = "location-prefectures";
 
-    prefectures.forEach((pref) => {
-      if (!regions.includes(pref)) return;
+    prefecturesInRegion.forEach((pref) => {
+      // 東京都の場合は都道府県として表示
+      if (pref === "東京都" && hasTokyo) {
+        const label = document.createElement("label");
+        label.className = "location-prefecture";
 
-      const label = document.createElement("label");
-      label.className = "location-prefecture";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.name = "wardFilter";
+        checkbox.value = "東京都";
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.name = "wardFilter";
-      checkbox.value = pref;
+        const span = document.createElement("span");
+        span.textContent = "東京都";
 
-      const span = document.createElement("span");
-      span.textContent = pref;
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        prefectureContainer.appendChild(label);
+      } else if (pref !== "東京都") {
+        // その他の都道府県
+        const label = document.createElement("label");
+        label.className = "location-prefecture";
 
-      label.appendChild(checkbox);
-      label.appendChild(span);
-      prefectureContainer.appendChild(label);
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.name = "wardFilter";
+        checkbox.value = pref;
+
+        const span = document.createElement("span");
+        span.textContent = pref;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        prefectureContainer.appendChild(label);
+      }
     });
 
-    if (prefectureContainer.children.length > 0) {
+    // 東京都の場合は、その下に23区を表示
+    if (regionName === "関東地方" && hasTokyo && tokyoWardsInData.length > 0) {
+      const wardsGroup = document.createElement("div");
+      wardsGroup.className = "location-wards-group";
+
+      const wardsTitle = document.createElement("div");
+      wardsTitle.className = "location-wards-title";
+      wardsTitle.textContent = "東京都23区";
+      wardsGroup.appendChild(wardsTitle);
+
+      const wardsContainer = document.createElement("div");
+      wardsContainer.className = "location-wards";
+
+      tokyoWardsInData.forEach((ward) => {
+        const label = document.createElement("label");
+        label.className = "location-ward";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.name = "wardFilter";
+        checkbox.value = ward;
+
+        const span = document.createElement("span");
+        span.textContent = ward;
+
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        wardsContainer.appendChild(label);
+      });
+
+      wardsGroup.appendChild(wardsContainer);
+      regionGroup.appendChild(wardsGroup);
+    }
+
+    if (prefectureContainer.children.length > 0 || regionGroup.querySelector(".location-wards-group")) {
       regionGroup.appendChild(prefectureContainer);
       elements.locationFilter.appendChild(regionGroup);
     }
@@ -341,8 +399,6 @@ function attachListeners() {
   // チェックボックス検索（新しい詳細検索フォーム用）
   const typeCheckboxes = document.querySelectorAll('input[name="typeFilter"][type="checkbox"]');
   const genderCheckboxes = document.querySelectorAll('input[name="genderFilter"][type="checkbox"]');
-  const rankCheckboxes = document.querySelectorAll('input[name="rankFilter"]');
-  
   if (typeCheckboxes.length > 0) {
     typeCheckboxes.forEach((checkbox) => {
       checkbox.addEventListener("change", updateResults);
@@ -360,12 +416,6 @@ function attachListeners() {
   } else if (elements.genderFilters?.length) {
     elements.genderFilters.forEach((radio) => {
       radio.addEventListener("change", updateResults);
-    });
-  }
-  
-  if (rankCheckboxes.length > 0) {
-    rankCheckboxes.forEach((checkbox) => {
-      checkbox.addEventListener("change", updateResults);
     });
   }
   
@@ -443,42 +493,6 @@ async function loadSchools() {
   }
 }
 
-// 進学偏差値から主要なランクを判定（合格実績の分布に基づく）
-function getMainRankFromScore(score) {
-  if (!Number.isFinite(score)) return null;
-  // 進学偏差値の値から、主要なランクを推定
-  // 実際のランクは合格実績の分布（tiers）に基づくため、ここでは参考値として使用
-  if (score >= 70) return "ss";
-  if (score >= 60) return "s";
-  if (score >= 55) return "a";
-  if (score >= 50) return "b";
-  if (score >= 45) return "c";
-  if (score >= 40) return "d";
-  return "e";
-}
-
-// 学校の合格実績ランク分布から主要なランクを判定
-function getMainRankFromTiers(tiers) {
-  if (!tiers) return null;
-  // 各ランクの割合を計算
-  const total = tiers.ss + tiers.s + tiers.a + tiers.b + tiers.c + tiers.d + tiers.e;
-  if (total === 0) return null;
-  
-  // 最も割合が高いランクを返す
-  const ratios = {
-    ss: tiers.ss / total,
-    s: tiers.s / total,
-    a: tiers.a / total,
-    b: tiers.b / total,
-    c: tiers.c / total,
-    d: tiers.d / total,
-    e: tiers.e / total,
-  };
-  
-  const maxRatio = Math.max(...Object.values(ratios));
-  const mainRank = Object.keys(ratios).find(key => ratios[key] === maxRatio);
-  return mainRank || null;
-}
 
 function updateWardFilterFromCheckboxes() {
   if (!elements.wardFilter || !elements.locationFilter) return;
@@ -508,12 +522,10 @@ function updateResults() {
   // チェックボックス検索（新しい詳細検索フォーム用）
   const typeCheckboxes = document.querySelectorAll('input[name="typeFilter"][type="checkbox"]:checked');
   const genderCheckboxes = document.querySelectorAll('input[name="genderFilter"][type="checkbox"]:checked');
-  const rankCheckboxes = document.querySelectorAll('input[name="rankFilter"]:checked');
   const wardCheckboxes = elements.locationFilter ? elements.locationFilter.querySelectorAll('input[name="wardFilter"]:checked') : [];
   
   const selectedTypes = typeCheckboxes.length > 0 ? Array.from(typeCheckboxes).map(cb => cb.value) : null;
   const selectedGenders = genderCheckboxes.length > 0 ? Array.from(genderCheckboxes).map(cb => cb.value) : null;
-  const selectedRanks = rankCheckboxes.length > 0 ? Array.from(rankCheckboxes).map(cb => cb.value) : null;
   const selectedWards = wardCheckboxes.length > 0 ? Array.from(wardCheckboxes).map(cb => cb.value) : null;
   
   // ラジオボタン検索（旧フォーム用）
@@ -535,20 +547,6 @@ function updateResults() {
     if (selectedGenders && selectedGenders.length > 0) {
       if (!selectedGenders.includes(school.gender)) return false;
     } else if (gender && school.gender !== gender) return false;
-    
-    // 進学偏差値ランクフィルター（合格実績の分布に基づく）
-    if (selectedRanks && selectedRanks.length > 0) {
-      // 学校の合格実績ランク分布から主要なランクを判定
-      const mainRank = getMainRankFromTiers(school.tiers);
-      if (!mainRank || !selectedRanks.includes(mainRank)) {
-        // 主要なランクが一致しない場合、選択されたランクのいずれかに該当する合格実績があるかチェック
-        const hasSelectedRank = selectedRanks.some(rank => {
-          const tierKey = rank.toLowerCase();
-          return school.tiers && school.tiers[tierKey] > 0;
-        });
-        if (!hasSelectedRank) return false;
-      }
-    }
     
     // 高校名フィルター
     if (keyword && !normalizeText(school.name).includes(keyword)) return false;
@@ -767,7 +765,6 @@ function resetFilters() {
   // チェックボックスをリセット
   document.querySelectorAll('input[name="typeFilter"][type="checkbox"]').forEach(cb => cb.checked = false);
   document.querySelectorAll('input[name="genderFilter"][type="checkbox"]').forEach(cb => cb.checked = false);
-  document.querySelectorAll('input[name="rankFilter"]').forEach(cb => cb.checked = false);
   if (elements.locationFilter) {
     elements.locationFilter.querySelectorAll('input[name="wardFilter"]').forEach(cb => cb.checked = false);
   }
