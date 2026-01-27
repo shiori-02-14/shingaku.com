@@ -314,6 +314,16 @@ const SchoolData = (() => {
     return text || null;
   }
 
+  async function fetchJson(url) {
+    const text = await fetchText(url);
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch (error) {
+      return null;
+    }
+  }
+
   async function loadSchools() {
     let csvText = "";
     let usedFallback = false;
@@ -331,6 +341,10 @@ const SchoolData = (() => {
     }
 
     let rows = parseCsv(csvText);
+    const extraRows = await loadExtraSchoolCsvs(getPrefectureSlug());
+    if (extraRows.length) {
+      rows = rows.concat(extraRows);
+    }
     rows = await attachDestinationsFromFiles(rows, dataPath);
     const enriched = rows.map(enrichSchoolData).filter(Boolean);
     const grouped = groupSchoolsBySlug(enriched);
@@ -358,6 +372,40 @@ const SchoolData = (() => {
         return acc;
       }, {});
     });
+  }
+
+  async function loadExtraSchoolCsvs(prefectureSlug) {
+    if (!prefectureSlug) return [];
+    const manifestPaths = [
+      `data/prefectures/${prefectureSlug}/areas/index.json`,
+      `data/prefectures/${prefectureSlug}/wards/index.json`,
+      `data/prefectures/${prefectureSlug}/cities/index.json`,
+    ];
+    const extraRows = [];
+    for (const manifestPath of manifestPaths) {
+      const manifest = await fetchJson(manifestPath);
+      if (!Array.isArray(manifest) || !manifest.length) {
+        continue;
+      }
+      const files = manifest
+        .filter((entry) => entry && entry.enabled && entry.file)
+        .map((entry) => String(entry.file));
+      if (!files.length) continue;
+      const tasks = files.map(async (filePath) => {
+        const text = await fetchText(filePath);
+        if (!text) return [];
+        const rows = parseCsv(text);
+        const sourceDir = new URL("./", new URL(filePath, window.location.href)).toString();
+        return rows.map((row) => ({ ...row, _sourceDir: sourceDir }));
+      });
+      const resolved = await Promise.all(tasks);
+      resolved.forEach((rows) => {
+        if (rows && rows.length) {
+          extraRows.push(...rows);
+        }
+      });
+    }
+    return extraRows;
   }
 
   function enrichSchoolData(row) {
@@ -462,7 +510,8 @@ const SchoolData = (() => {
       try {
         let text = cache.get(filePath) ?? DESTINATIONS_FALLBACK.get(filePath);
         if (!text) {
-          const url = resolveDestinationUrl(filePath, dataDir, pageDir);
+          const baseDir = row._sourceDir ? new URL(row._sourceDir, window.location.href) : dataDir;
+          const url = resolveDestinationUrl(filePath, baseDir, pageDir);
           if (!url) return [row];
           text = await fetchText(url);
           if (!text) return [row];

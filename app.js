@@ -42,7 +42,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (flags.hasSearchUI) {
     attachListeners();
   }
-  if (flags.hasSearchUI || elements.totalSchools || elements.wardGrid || elements.rankingList) {
+  if (
+    flags.hasSearchUI ||
+    elements.totalSchools ||
+    elements.wardGrid ||
+    hasRankingLists()
+  ) {
     loadSchools();
   }
 });
@@ -77,6 +82,20 @@ function cacheElements() {
   elements.regionFilter = document.getElementById("regionFilter");
   elements.wardGrid = document.getElementById("wardGrid");
   elements.rankingList = document.getElementById("rankingList");
+  elements.rankingListOverall = document.getElementById("rankingListOverall");
+  elements.rankingListBoys = document.getElementById("rankingListBoys");
+  elements.rankingListGirls = document.getElementById("rankingListGirls");
+  elements.rankingListCoed = document.getElementById("rankingListCoed");
+}
+
+function hasRankingLists() {
+  return Boolean(
+    elements.rankingList ||
+      elements.rankingListOverall ||
+      elements.rankingListBoys ||
+      elements.rankingListGirls ||
+      elements.rankingListCoed
+  );
 }
 
 function hasSearchUI() {
@@ -715,32 +734,62 @@ function countSchoolsByWard(schools) {
 }
 
 function renderTopRanking(limit = 5) {
-  if (!elements.rankingList) return;
-  elements.rankingList.innerHTML = "";
+  const targets = getRankingTargets();
+  if (!targets.length) return;
+  const emptyMessage = "ランキングのデータがありません。";
   if (!state.schools.length) {
-    renderRankingMessage("ランキングのデータがありません。");
+    targets.forEach(({ element }) => renderRankingList([], element, emptyMessage));
     return;
   }
-
-  const ranked = sortSchools(state.schools, "adv-desc").slice(0, limit);
-  if (!ranked.length) {
-    renderRankingMessage("ランキングのデータがありません。");
-    return;
-  }
-
-  const fragment = document.createDocumentFragment();
-  ranked.forEach((school, index) => {
-    fragment.appendChild(createRankCard(school, index + 1));
+  targets.forEach(({ element, gender }) => {
+    const filtered = gender
+      ? state.schools.filter((school) => school.gender === gender)
+      : state.schools;
+    const ranked = sortSchools(filtered, "adv-desc").slice(0, limit);
+    renderRankingList(ranked, element, emptyMessage);
   });
-  elements.rankingList.appendChild(fragment);
 }
 
-function renderRankingMessage(message) {
-  if (!elements.rankingList) return;
-  const empty = document.createElement("div");
-  empty.className = "empty-state";
-  empty.textContent = message;
-  elements.rankingList.appendChild(empty);
+function getRankingTargets() {
+  if (
+    elements.rankingListOverall ||
+    elements.rankingListBoys ||
+    elements.rankingListGirls ||
+    elements.rankingListCoed
+  ) {
+    const targets = [];
+    if (elements.rankingListOverall) {
+      targets.push({ element: elements.rankingListOverall, gender: "" });
+    }
+    if (elements.rankingListBoys) {
+      targets.push({ element: elements.rankingListBoys, gender: "男子校" });
+    }
+    if (elements.rankingListGirls) {
+      targets.push({ element: elements.rankingListGirls, gender: "女子校" });
+    }
+    if (elements.rankingListCoed) {
+      targets.push({ element: elements.rankingListCoed, gender: "共学" });
+    }
+    return targets;
+  }
+  return elements.rankingList ? [{ element: elements.rankingList, gender: "" }] : [];
+}
+
+function renderRankingList(items, target, emptyMessage) {
+  if (!target) return;
+  target.innerHTML = "";
+  if (!items.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty-state";
+    empty.textContent = emptyMessage || "ランキングのデータがありません。";
+    target.appendChild(empty);
+    return;
+  }
+  const fragment = document.createDocumentFragment();
+  items.forEach((school, index) => {
+    fragment.appendChild(createRankCard(school, index + 1));
+  });
+  target.appendChild(fragment);
 }
 
 function createRankCard(school, rank) {

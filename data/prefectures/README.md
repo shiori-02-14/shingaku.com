@@ -2,6 +2,7 @@
 
 - データは `data/prefectures/<pref>/` に置きます（例: `data/prefectures/tokyo/`）。
 - 学校一覧は `schools.csv` に追記します。
+- `areas/` のサブCSVを使う場合は `index.json` で読み込み対象を管理します（東京のみ対応）。
 - `ward` は検索/ランキングで使う地域名（市区町村や地域区分）です。
 - 合格実績は `destinations_file` で `destinations/<slug>.csv` を指定するのがおすすめです。
 - `year` を空欄にすると、合格実績CSV内の全年度を読み込みます（年度追加のたびに `schools.csv` を更新しなくてOK）。
