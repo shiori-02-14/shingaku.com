@@ -1033,21 +1033,17 @@ function createRankCard(school, rank) {
     card.setAttribute("aria-label", `${school.name}の詳細を見る`);
   }
 
+  // ランクバッジのスタイル（1-3位は特別な色）
+  const rankClass = rank <= 3 ? `rank-badge rank-${rank}` : "rank-badge";
+
   card.innerHTML = `
-    <div class="rank-badge">${rank}</div>
+    <div class="rank-image-container">
+      <div class="${rankClass}">${rank}</div>
+      <div class="rank-image" style="background-image: url('https://placehold.co/200x120/e8f0fe/1b4f9c?text=${encodeURIComponent(school.name.slice(0, 4))}');"></div>
+    </div>
     <div class="rank-info">
       <h3 class="school-name">${escapeHtml(school.name)}</h3>
-      <div class="rank-meta-row">
-        <div class="rank-meta">
-          <span>${escapeHtml(school.ward)}</span>
-          <span>${escapeHtml(school.type)}</span>
-          <span>${escapeHtml(school.gender)}</span>
-        </div>
-        <div class="score">
-          <div class="score-value">${formatScore(school.advScore)}</div>
-          <div class="score-label">進学偏差値</div>
-        </div>
-      </div>
+      <div class="rank-score">${formatScore(school.advScore)}</div>
     </div>
   `;
 
