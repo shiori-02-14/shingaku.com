@@ -443,17 +443,41 @@ async function loadSchools() {
   }
 }
 
-function getScoreRank(score) {
+// 進学偏差値から主要なランクを判定（合格実績の分布に基づく）
+function getMainRankFromScore(score) {
   if (!Number.isFinite(score)) return null;
-  if (score >= 75) return "SSS";
-  if (score >= 70) return "SS";
-  if (score >= 65) return "S";
-  if (score >= 60) return "A";
-  if (score >= 55) return "B";
-  if (score >= 50) return "C";
-  if (score >= 45) return "D";
-  if (score >= 40) return "E";
-  return "F";
+  // 進学偏差値の値から、主要なランクを推定
+  // 実際のランクは合格実績の分布（tiers）に基づくため、ここでは参考値として使用
+  if (score >= 70) return "ss";
+  if (score >= 60) return "s";
+  if (score >= 55) return "a";
+  if (score >= 50) return "b";
+  if (score >= 45) return "c";
+  if (score >= 40) return "d";
+  return "e";
+}
+
+// 学校の合格実績ランク分布から主要なランクを判定
+function getMainRankFromTiers(tiers) {
+  if (!tiers) return null;
+  // 各ランクの割合を計算
+  const total = tiers.ss + tiers.s + tiers.a + tiers.b + tiers.c + tiers.d + tiers.e;
+  if (total === 0) return null;
+  
+  // 最も割合が高いランクを返す
+  const ratios = {
+    ss: tiers.ss / total,
+    s: tiers.s / total,
+    a: tiers.a / total,
+    b: tiers.b / total,
+    c: tiers.c / total,
+    d: tiers.d / total,
+    e: tiers.e / total,
+  };
+  
+  const maxRatio = Math.max(...Object.values(ratios));
+  const mainRank = Object.keys(ratios).find(key => ratios[key] === maxRatio);
+  return mainRank || null;
 }
 
 function updateWardFilterFromCheckboxes() {
@@ -512,10 +536,18 @@ function updateResults() {
       if (!selectedGenders.includes(school.gender)) return false;
     } else if (gender && school.gender !== gender) return false;
     
-    // 進学偏差値ランクフィルター
+    // 進学偏差値ランクフィルター（合格実績の分布に基づく）
     if (selectedRanks && selectedRanks.length > 0) {
-      const schoolRank = getScoreRank(school.advScore);
-      if (!schoolRank || !selectedRanks.includes(schoolRank)) return false;
+      // 学校の合格実績ランク分布から主要なランクを判定
+      const mainRank = getMainRankFromTiers(school.tiers);
+      if (!mainRank || !selectedRanks.includes(mainRank)) {
+        // 主要なランクが一致しない場合、選択されたランクのいずれかに該当する合格実績があるかチェック
+        const hasSelectedRank = selectedRanks.some(rank => {
+          const tierKey = rank.toLowerCase();
+          return school.tiers && school.tiers[tierKey] > 0;
+        });
+        if (!hasSelectedRank) return false;
+      }
     }
     
     // 高校名フィルター
