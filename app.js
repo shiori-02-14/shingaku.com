@@ -1037,10 +1037,7 @@ function createRankCard(school, rank) {
   const rankClass = rank <= 3 ? `rank-badge rank-${rank}` : "rank-badge";
 
   card.innerHTML = `
-    <div class="rank-image-container">
-      <div class="${rankClass}">${rank}</div>
-      <div class="rank-image" style="background-image: url('https://placehold.co/200x120/e8f0fe/1b4f9c?text=${encodeURIComponent(school.name.slice(0, 4))}');"></div>
-    </div>
+    <div class="${rankClass}">${rank}</div>
     <div class="rank-info">
       <h3 class="school-name">${escapeHtml(school.name)}</h3>
       <div class="rank-score">${formatScore(school.advScore)}</div>
