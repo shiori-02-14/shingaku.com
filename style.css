@@ -418,17 +418,34 @@ h1 {
   color: var(--color-accent-soft);
 }
 
+/* Ward Grid - レスポンシブ対応 */
 .ward-grid {
   display: grid;
-  gap: var(--spacing-md);
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  grid-template-columns: repeat(5, 1fr); /* デスクトップ: 5列 */
+}
+
+/* タブレット: 4列 */
+@media (max-width: 900px) {
+  .ward-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+}
+
+/* スマホ: 3列 */
+@media (max-width: 640px) {
+  .ward-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
 }
 
 .ward-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-soft);
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 16px 12px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -437,6 +454,14 @@ h1 {
   transition: all 0.2s ease;
   min-height: 80px;
   justify-content: center;
+}
+
+@media (max-width: 640px) {
+  .ward-card {
+    padding: 12px 8px;
+    min-height: 64px;
+    border-radius: 10px;
+  }
 }
 
 .ward-card:hover {
@@ -451,10 +476,23 @@ h1 {
   line-height: 1.4;
 }
 
+@media (max-width: 640px) {
+  .ward-name {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+}
+
 .ward-count {
   font-size: 13px;
   color: var(--color-muted);
   line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .ward-count {
+    font-size: 11px;
+  }
 }
 
 /* 地域フィルター（あいうえお順） */
@@ -578,10 +616,27 @@ h1 {
   }
 }
 
+/* Conditions Grid - レスポンシブ対応 */
 .conditions-grid {
   display: grid;
-  gap: var(--spacing-sm);
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  grid-template-columns: repeat(4, 1fr); /* デスクトップ: 4列 */
+}
+
+/* タブレット: 3列 */
+@media (max-width: 900px) {
+  .conditions-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+}
+
+/* スマホ: 2列 */
+@media (max-width: 640px) {
+  .conditions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
 }
 
 .condition-card {
@@ -3229,45 +3284,6 @@ h1 {
 
   .search-button {
     width: 100%;
-  }
-
-  .ward-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .ward-card {
-    padding: 12px 8px;
-    min-height: 60px;
-    border-radius: 10px;
-  }
-
-  .ward-name {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.3;
-  }
-
-  .ward-count {
-    font-size: 11px;
-    margin-top: 4px;
-  }
-
-  .conditions-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-  }
-
-  .condition-card {
-    padding: var(--spacing-sm);
-  }
-
-  .condition-title {
-    font-size: 13px;
-  }
-
-  .condition-note {
-    font-size: 11px;
   }
 
   .features-grid {
