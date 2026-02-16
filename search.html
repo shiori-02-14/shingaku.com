@@ -1,178 +1,186 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>学校検索 | 進学偏差値.com</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="data.js" defer></script>
-    <script src="app.js" defer></script>
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="logo" href="index.html" aria-label="トップページへ" title="トップへ">
-          <span class="logo-mark">進学偏差値.com</span>
-          <span class="logo-sub">全国 高校情報</span>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学校検索 | 進学偏差値.com</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html" aria-label="トップページへ" title="トップへ">
+        <span class="logo-mark">進学偏差値.com</span>
+        <span class="logo-sub">全国 高校情報</span>
+      </a>
+      <nav class="header-nav">
+        <a class="nav-link is-active" href="search.html">学校検索</a>
+        <a class="nav-link" href="ward-ranking.html">ランキング</a>
+        <a class="nav-link" href="comparison.html" id="comparisonLink">
+          学校比較
+          <span class="comparison-badge" id="comparisonBadge" style="display: none;"></span>
         </a>
-        <nav class="header-nav">
-          <a class="nav-link is-active" href="search.html">学校検索</a>
-          <a class="nav-link" href="ward-ranking.html">ランキング</a>
-          <a class="nav-link" href="comparison.html" id="comparisonLink">
-            学校比較
-            <span class="comparison-badge" id="comparisonBadge" style="display: none;"></span>
-          </a>
-          <a class="nav-link" href="calculation.html">進学偏差値とは</a>
-        </nav>
-      </div>
-    </header>
+        <a class="nav-link" href="calculation.html">進学偏差値とは</a>
+      </nav>
+    </div>
+  </header>
 
-    <main>
-      <!-- ヒーローセクション -->
-      <section class="hero">
-        <div class="container hero-inner">
-          <p class="eyebrow">学校検索</p>
-          <h1>高校を探す</h1>
-          <p class="hero-lead">
-            地域・国公私立・男女・高校名で絞り込み、学校を一覧で確認できます。
-          </p>
-          <div class="notice">
-            ※現在はサンプルデータです。工業高校と商業高校は抜きです。全国対応に向けて拡充予定です。
-          </div>
+  <main>
+    <!-- ヒーローセクション -->
+    <section class="hero">
+      <div class="container hero-inner">
+        <p class="eyebrow">学校検索</p>
+        <h1>高校を探す</h1>
+        <p class="hero-lead">
+          地域・国公私立・男女・高校名で絞り込み、学校を一覧で確認できます。
+        </p>
+        <div class="notice">
+          ※現在はサンプルデータです。工業高校と商業高校は抜きです。全国対応に向けて拡充予定です。
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 詳細検索 -->
-      <section class="search-panel" id="search">
-        <div class="container">
-          <div class="detailed-search">
-            <div class="detailed-search-header">
-              <div class="detailed-search-title">
-                <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <path d="M19 19L14.65 14.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span>詳細検索</span>
+    <!-- 詳細検索 -->
+    <section class="search-panel" id="search">
+      <div class="container">
+        <div class="detailed-search">
+          <div class="detailed-search-header">
+            <div class="detailed-search-title">
+              <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M19 19L14.65 14.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+              <span>詳細検索</span>
+            </div>
+            <button type="button" class="toggle-button" id="toggleSearchForm" aria-expanded="true"
+              aria-label="検索フォームを折りたたむ">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </button>
+          </div>
+          <form id="search-form" class="detailed-search-form" style="display: block;">
+            <!-- 高校名 -->
+            <div class="search-section">
+              <label class="search-section-label">高校名</label>
+              <input id="keywordFilter" class="search-input" type="text" placeholder="例：○○高校" autocomplete="off" />
+            </div>
+
+            <!-- 国公私立 -->
+            <div class="search-section">
+              <label class="search-section-label">国公私立</label>
+              <div class="checkbox-group">
+                <label class="checkbox-option">
+                  <input type="checkbox" name="typeFilter" value="国立" />
+                  <span>国立</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" name="typeFilter" value="公立" />
+                  <span>公立</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" name="typeFilter" value="私立" />
+                  <span>私立</span>
+                </label>
               </div>
-              <button type="button" class="toggle-button" id="toggleSearchForm" aria-expanded="true" aria-label="検索フォームを折りたたむ">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+            </div>
+
+            <!-- 男女共学 -->
+            <div class="search-section">
+              <label class="search-section-label">男女共学</label>
+              <div class="checkbox-group">
+                <label class="checkbox-option">
+                  <input type="checkbox" name="genderFilter" value="共学" />
+                  <span>共学</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" name="genderFilter" value="男子校" />
+                  <span>男子校</span>
+                </label>
+                <label class="checkbox-option">
+                  <input type="checkbox" name="genderFilter" value="女子校" />
+                  <span>女子校</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- エリア（地域） -->
+            <div class="search-section">
+              <label class="search-section-label">エリア</label>
+              <div class="location-filter" id="locationFilter">
+                <!-- JavaScriptで動的に生成 -->
+              </div>
+            </div>
+
+            <!-- 偏差値範囲（隠しフィールドとして保持） -->
+            <select id="wardFilter" class="visually-hidden" aria-label="地域">
+              <option value="">地域を選択</option>
+            </select>
+            <select id="scoreMinFilter" class="visually-hidden" aria-label="偏差値 下限">
+              <option value="">下限無し</option>
+            </select>
+            <select id="scoreMaxFilter" class="visually-hidden" aria-label="偏差値 上限">
+              <option value="">上限無し</option>
+            </select>
+
+            <!-- ボタン -->
+            <div class="form-actions">
+              <button type="button" class="search-button" id="applyFilters">
+                検索
+              </button>
+              <button type="button" class="reset-button" id="resetFilters">
+                リセット
               </button>
             </div>
-            <form id="search-form" class="detailed-search-form" style="display: block;">
-              <!-- 高校名 -->
-              <div class="search-section">
-                <label class="search-section-label">高校名</label>
-                <input
-                  id="keywordFilter"
-                  class="search-input"
-                  type="text"
-                  placeholder="例：○○高校"
-                  autocomplete="off"
-                />
-              </div>
-
-              <!-- 国公私立 -->
-              <div class="search-section">
-                <label class="search-section-label">国公私立</label>
-                <div class="checkbox-group">
-                  <label class="checkbox-option">
-                    <input type="checkbox" name="typeFilter" value="国立" />
-                    <span>国立</span>
-                  </label>
-                  <label class="checkbox-option">
-                    <input type="checkbox" name="typeFilter" value="公立" />
-                    <span>公立</span>
-                  </label>
-                  <label class="checkbox-option">
-                    <input type="checkbox" name="typeFilter" value="私立" />
-                    <span>私立</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- 男女共学 -->
-              <div class="search-section">
-                <label class="search-section-label">男女共学</label>
-                <div class="checkbox-group">
-                  <label class="checkbox-option">
-                    <input type="checkbox" name="genderFilter" value="共学" />
-                    <span>共学</span>
-                  </label>
-                  <label class="checkbox-option">
-                    <input type="checkbox" name="genderFilter" value="男子校" />
-                    <span>男子校</span>
-                  </label>
-                  <label class="checkbox-option">
-                    <input type="checkbox" name="genderFilter" value="女子校" />
-                    <span>女子校</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- エリア（地域） -->
-              <div class="search-section">
-                <label class="search-section-label">エリア</label>
-                <div class="location-filter" id="locationFilter">
-                  <!-- JavaScriptで動的に生成 -->
-                </div>
-              </div>
-
-              <!-- 偏差値範囲（隠しフィールドとして保持） -->
-              <select id="wardFilter" class="visually-hidden" aria-label="地域">
-                <option value="">地域を選択</option>
-              </select>
-              <select id="scoreMinFilter" class="visually-hidden" aria-label="偏差値 下限">
-                <option value="">下限無し</option>
-              </select>
-              <select id="scoreMaxFilter" class="visually-hidden" aria-label="偏差値 上限">
-                <option value="">上限無し</option>
-              </select>
-
-              <!-- ボタン -->
-              <div class="form-actions">
-                <button type="button" class="search-button" id="applyFilters">
-                  検索
-                </button>
-                <button type="button" class="reset-button" id="resetFilters">
-                  リセット
-                </button>
-              </div>
-            </form>
-          </div>
+          </form>
         </div>
-      </section>
-
-      <!-- 検索結果 -->
-      <section class="results">
-        <div class="container">
-          <div class="results-header">
-            <div>
-              <h2 class="section-title">検索結果</h2>
-              <p class="results-count" id="resultsCount">読み込み中...</p>
-            </div>
-            <label class="sort-field">
-              <span>並び替え</span>
-              <select id="sortSelect" data-default="name-asc">
-                <option value="name-asc" selected>学校名順</option>
-                <option value="adv-desc">進学偏差値が高い順</option>
-                <option value="adv-asc">進学偏差値が低い順</option>
-              </select>
-            </label>
-          </div>
-          <div id="resultsList" class="card-grid"></div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <p>進学偏差値.com（MVP）</p>
-        <p class="footer-note">データ提供: 自前CSV / サンプル</p>
-        <p class="footer-credit">© 2026 しおり 🔖</p>
       </div>
-    </footer>
-  </body>
+    </section>
+
+    <!-- 検索結果 -->
+    <section class="results">
+      <div class="container">
+        <div class="results-header">
+          <div>
+            <h2 class="section-title">検索結果</h2>
+            <p class="results-count" id="resultsCount">読み込み中...</p>
+          </div>
+          <label class="sort-field">
+            <span>並び替え</span>
+            <select id="sortSelect" data-default="name-asc">
+              <option value="name-asc" selected>学校名順</option>
+              <option value="adv-desc">進学偏差値が高い順</option>
+              <option value="adv-asc">進学偏差値が低い順</option>
+            </select>
+          </label>
+        </div>
+        <div id="resultsList" class="card-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>進学偏差値.com（MVP）</p>
+      <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+      <p class="footer-credit">© 2026 しおり 🔖</p>
+    </div>
+  </footer>
+</body>
+
 </html>

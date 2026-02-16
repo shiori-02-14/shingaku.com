@@ -1,84 +1,92 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ランキング | 進学偏差値.com</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="data.js" defer></script>
-    <script src="ward-ranking.js" defer></script>
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="logo" href="index.html" aria-label="トップページへ" title="トップへ">
-          <span class="logo-mark">進学偏差値.com</span>
-          <span class="logo-sub">全国 高校情報</span>
-        </a>
-        <nav class="header-nav">
-          <a class="nav-link" href="search.html">学校検索</a>
-          <a class="nav-link is-active" href="ward-ranking.html">ランキング</a>
-          <a class="nav-link" href="comparison.html">学校比較</a>
-          <a class="nav-link" href="calculation.html">進学偏差値とは</a>
-        </nav>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ランキング | 進学偏差値.com</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="data.js" defer></script>
+  <script src="ward-ranking.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html" aria-label="トップページへ" title="トップへ">
+        <span class="logo-mark">進学偏差値.com</span>
+        <span class="logo-sub">全国 高校情報</span>
+      </a>
+      <nav class="header-nav">
+        <a class="nav-link" href="search.html">学校検索</a>
+        <a class="nav-link is-active" href="ward-ranking.html">ランキング</a>
+        <a class="nav-link" href="comparison.html">学校比較</a>
+        <a class="nav-link" href="calculation.html">進学偏差値とは</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <p class="eyebrow">ランキング</p>
+        <h1>条件別に進学偏差値を比較する</h1>
+        <p class="hero-lead">
+          地域・男女区分を選ぶと、条件に合う学校が進学偏差値の高い順に並びます。
+        </p>
+        <div class="notice">※工業高校と商業高校は抜きです。</div>
       </div>
-    </header>
+    </section>
 
-    <main>
-      <section class="hero">
-        <div class="container hero-inner">
-          <p class="eyebrow">ランキング</p>
-          <h1>条件別に進学偏差値を比較する</h1>
-          <p class="hero-lead">
-            地域・男女区分を選ぶと、条件に合う学校が進学偏差値の高い順に並びます。
-          </p>
-          <div class="notice">※工業高校と商業高校は抜きです。</div>
-        </div>
-      </section>
-
-      <section class="search-panel">
-        <div class="container">
-          <form class="search-form">
-            <div class="form-grid">
-              <label class="field">
-                <span>地域を選択</span>
-                <select id="wardSelect">
-                  <option value="">選択してください</option>
-                </select>
-              </label>
-              <label class="field">
-                <span>男女</span>
-                <select id="genderSelect">
-                  <option value="">すべて</option>
-                  <option value="共学">共学</option>
-                  <option value="男子校">男子校</option>
-                  <option value="女子校">女子校</option>
-                </select>
-              </label>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <section class="results">
-        <div class="container">
-          <div class="results-header ranking-header">
-            <div>
-              <h2 class="section-title">ランキング</h2>
-              <p class="results-count" id="rankingCount">区を選択してください</p>
-            </div>
+    <section class="search-panel">
+      <div class="container">
+        <form class="search-form">
+          <div class="form-grid">
+            <label class="field">
+              <span>地域を選択</span>
+              <select id="wardSelect">
+                <option value="">選択してください</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>男女</span>
+              <select id="genderSelect">
+                <option value="">すべて</option>
+                <option value="共学">共学</option>
+                <option value="男子校">男子校</option>
+                <option value="女子校">女子校</option>
+              </select>
+            </label>
           </div>
-          <div id="rankingList" class="ranking-list"></div>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <p>進学偏差値.com（MVP）</p>
-        <p class="footer-note">データ提供: 自前CSV / サンプル</p>
-        <p class="footer-credit">© 2026 しおり 🔖</p>
+        </form>
       </div>
-    </footer>
-  </body>
+    </section>
+
+    <section class="results">
+      <div class="container">
+        <div class="results-header ranking-header">
+          <div>
+            <h2 class="section-title">ランキング</h2>
+            <p class="results-count" id="rankingCount">区を選択してください</p>
+          </div>
+        </div>
+        <div id="rankingList" class="ranking-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>進学偏差値.com（MVP）</p>
+      <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+      <p class="footer-credit">© 2026 しおり 🔖</p>
+    </div>
+  </footer>
+</body>
+
 </html>

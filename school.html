@@ -1,133 +1,122 @@
 <!doctype html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>学校詳細 | 進学偏差値.com</title>
-    <link rel="stylesheet" href="style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="data.js" defer></script>
-    <script src="detail.js" defer></script>
-  </head>
-  <body>
-    <header class="site-header">
-      <div class="container header-inner">
-        <a class="logo" href="index.html" aria-label="トップページへ">
-          <span class="logo-mark">進学偏差値.com</span>
-          <span class="logo-sub">全国 高校情報</span>
-        </a>
-        <nav class="header-nav">
-          <a class="nav-link" href="search.html">学校検索</a>
-          <a class="nav-link" href="ward-ranking.html">ランキング</a>
-          <a class="nav-link" href="comparison.html">学校比較</a>
-          <a class="nav-link" href="calculation.html">進学偏差値とは</a>
-        </nav>
-      </div>
-    </header>
 
-    <main id="detailRoot">
-      <section class="detail-hero">
-        <div class="container">
-          <a class="back-link" href="index.html">← 一覧に戻る</a>
-          <div class="detail-header">
-            <div>
-              <p class="eyebrow">学校詳細</p>
-              <h1 id="schoolName">読み込み中...</h1>
-              <div class="detail-meta">
-                <div class="badge-row" id="schoolBadges"></div>
-                <label class="field detail-year">
-                  <span>年度</span>
-                  <select id="yearSelect"></select>
-                </label>
-              </div>
-            </div>
-            <div class="detail-score">
-              <div class="score-value" id="scoreValue">-</div>
-              <div class="score-label">進学偏差値</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学校詳細 | 進学偏差値.com</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="data.js" defer></script>
+  <script src="detail.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html" aria-label="トップページへ">
+        <span class="logo-mark">進学偏差値.com</span>
+        <span class="logo-sub">全国 高校情報</span>
+      </a>
+      <nav class="header-nav">
+        <a class="nav-link" href="search.html">学校検索</a>
+        <a class="nav-link" href="ward-ranking.html">ランキング</a>
+        <a class="nav-link" href="comparison.html">学校比較</a>
+        <a class="nav-link" href="calculation.html">進学偏差値とは</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="detailRoot">
+    <section class="detail-hero">
+      <div class="container">
+        <a class="back-link" href="index.html">← 一覧に戻る</a>
+        <div class="detail-header">
+          <div>
+            <p class="eyebrow">学校詳細</p>
+            <h1 id="schoolName">読み込み中...</h1>
+            <div class="detail-meta">
+              <div class="badge-row" id="schoolBadges"></div>
+              <label class="field detail-year">
+                <span>年度</span>
+                <select id="yearSelect"></select>
+              </label>
             </div>
           </div>
-          <div class="tier-line" id="tierLine"></div>
-          <div class="tier-bar" id="tierBar">
-            <span class="tier-ss"></span>
-            <span class="tier-s"></span>
-            <span class="tier-a"></span>
-            <span class="tier-b"></span>
-            <span class="tier-c"></span>
-            <span class="tier-d"></span>
-            <span class="tier-e"></span>
+          <div class="detail-score">
+            <div class="score-value" id="scoreValue">-</div>
+            <div class="score-label">進学偏差値</div>
           </div>
         </div>
-      </section>
+        <div class="tier-line" id="tierLine"></div>
+        <div class="tier-bar" id="tierBar">
+          <span class="tier-ss"></span>
+          <span class="tier-s"></span>
+          <span class="tier-a"></span>
+          <span class="tier-b"></span>
+          <span class="tier-c"></span>
+          <span class="tier-d"></span>
+          <span class="tier-e"></span>
+        </div>
+      </div>
+    </section>
 
-      <section class="detail-body">
-        <div class="container detail-grid">
-          <div class="detail-card">
-            <h2>合格実績（合格者数）</h2>
-            <p class="results-count" id="destinationsTotal"></p>
-            <div class="destination-sections">
-              <div
-                class="destination-section destination-public"
-                id="destinationsPublicSection"
-                style="display: none;"
-              >
-                <p class="destination-section-title">国公立大学</p>
-                <ul class="destination-list" id="destinationsPublicList"></ul>
-              </div>
-              <div
-                class="destination-section destination-private"
-                id="destinationsPrivateSection"
-                style="display: none;"
-              >
-                <p class="destination-section-title">私立大学</p>
-                <ul class="destination-list" id="destinationsPrivateList"></ul>
-              </div>
-              <div
-                class="destination-section destination-medical"
-                id="destinationsMedicalSection"
-                style="display: none;"
-              >
-                <p class="destination-section-title">医学部</p>
-                <ul class="destination-list" id="destinationsMedicalList"></ul>
-              </div>
-              <div
-                class="destination-section destination-overseas"
-                id="destinationsOverseasSection"
-                style="display: none;"
-              >
-                <p class="destination-section-title">海外大学</p>
-                <ul class="destination-list" id="destinationsOverseasList"></ul>
-              </div>
+    <section class="detail-body">
+      <div class="container detail-grid">
+        <div class="detail-card">
+          <h2>合格実績（合格者数）</h2>
+          <p class="results-count" id="destinationsTotal"></p>
+          <div class="destination-sections">
+            <div class="destination-section destination-public" id="destinationsPublicSection" style="display: none;">
+              <p class="destination-section-title">国公立大学</p>
+              <ul class="destination-list" id="destinationsPublicList"></ul>
             </div>
-            <div class="chart-container">
-              <canvas id="destinationsChart"></canvas>
+            <div class="destination-section destination-private" id="destinationsPrivateSection" style="display: none;">
+              <p class="destination-section-title">私立大学</p>
+              <ul class="destination-list" id="destinationsPrivateList"></ul>
+            </div>
+            <div class="destination-section destination-medical" id="destinationsMedicalSection" style="display: none;">
+              <p class="destination-section-title">医学部</p>
+              <ul class="destination-list" id="destinationsMedicalList"></ul>
+            </div>
+            <div class="destination-section destination-overseas" id="destinationsOverseasSection"
+              style="display: none;">
+              <p class="destination-section-title">海外大学</p>
+              <ul class="destination-list" id="destinationsOverseasList"></ul>
             </div>
           </div>
-          <div class="detail-card">
-            <h2>ランク分布</h2>
-            <div class="chart-container">
-              <canvas id="tierChart"></canvas>
-            </div>
-          </div>
-          <div
-            class="detail-card chart-full-width"
-            id="trendCard"
-            style="display: none;"
-          >
-            <h2>年度別トレンド</h2>
-            <div class="chart-container">
-              <canvas id="trendChart"></canvas>
-            </div>
+          <div class="chart-container">
+            <canvas id="destinationsChart"></canvas>
           </div>
         </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="container footer-inner">
-        <p>進学偏差値.com（MVP）</p>
-        <p class="footer-note">データ提供: 自前CSV / サンプル</p>
-        <p class="footer-credit">© 2026 しおり 🔖</p>
+        <div class="detail-card">
+          <h2>ランク分布</h2>
+          <div class="chart-container">
+            <canvas id="tierChart"></canvas>
+          </div>
+        </div>
+        <div class="detail-card chart-full-width" id="trendCard" style="display: none;">
+          <h2>年度別トレンド</h2>
+          <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
       </div>
-    </footer>
-  </body>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>進学偏差値.com（MVP）</p>
+      <p class="footer-note">データ提供: 自前CSV / サンプル</p>
+      <p class="footer-credit">© 2026 しおり 🔖</p>
+    </div>
+  </footer>
+</body>
+
 </html>

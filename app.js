@@ -4,9 +4,15 @@ const state = {
   comparisonList: [],
 };
 
-const elements = {};
+const elements = {
+  loadingOverlay: null,
+  toastContainer: null,
+};
 const flags = {
   hasSearchUI: false,
+};
+const CONFIG = {
+  maxComparison: 5,
 };
 const TOKYO_WARDS = [
   "千代田区",
@@ -35,13 +41,16 @@ const TOKYO_WARDS = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
+  createGlobalUI();
   cacheElements();
   bindLogoReload();
   setupComparisonBadge();
   flags.hasSearchUI = hasSearchUI();
+  
   if (flags.hasSearchUI) {
     attachListeners();
   }
+  
   if (
     flags.hasSearchUI ||
     elements.totalSchools ||
@@ -51,6 +60,59 @@ document.addEventListener("DOMContentLoaded", () => {
     loadSchools();
   }
 });
+
+function createGlobalUI() {
+  // Loading Overlay
+  if (!document.querySelector(".loading-overlay")) {
+    const overlay = document.createElement("div");
+    overlay.className = "loading-overlay";
+    overlay.innerHTML = '<div class="loading-spinner"></div>';
+    document.body.appendChild(overlay);
+    elements.loadingOverlay = overlay;
+  }
+
+  // Toast Container
+  if (!document.querySelector(".toast-container")) {
+    const container = document.createElement("div");
+    container.className = "toast-container";
+    document.body.appendChild(container);
+    elements.toastContainer = container;
+  }
+}
+
+function showLoading() {
+  if (elements.loadingOverlay) {
+    elements.loadingOverlay.classList.add("is-visible");
+  }
+}
+
+function hideLoading() {
+  if (elements.loadingOverlay) {
+    elements.loadingOverlay.classList.remove("is-visible");
+  }
+}
+
+function showToast(message, type = "success") {
+  if (!elements.toastContainer) return;
+  
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  
+  elements.toastContainer.appendChild(toast);
+  
+  // Trigger reflow
+  toast.offsetHeight;
+  
+  toast.classList.add("is-visible");
+  
+  setTimeout(() => {
+    toast.classList.remove("is-visible");
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 3000);
+}
 
 function setupComparisonBadge() {
   const link = document.getElementById("comparisonLink");
@@ -429,7 +491,10 @@ function attachListeners() {
     });
   }
   
-  elements.keywordFilter.addEventListener("input", debounce(updateResults, 200));
+  // Keyword filter with multi-keyword support
+  if (elements.keywordFilter) {
+    elements.keywordFilter.addEventListener("input", debounce(updateResults, 300));
+  }
   elements.sortSelect.addEventListener("change", updateResults);
   
   if (elements.regionFilter) {
@@ -452,14 +517,20 @@ function attachListeners() {
 }
 
 async function loadSchools() {
+  showLoading();
   try {
+    // Artificial delay for better UX feeling (optional, remove for production if preferred)
+    // await new Promise(resolve => setTimeout(resolve, 300));
+
     state.schools = await SchoolData.loadSchools();
     state.regions = getSortedRegions(state.schools);
+    
     if (hasSearchUI()) {
       populateWardOptions(state.regions);
       renderRegionFilter(state.regions);
       renderLocationFilter(state.regions);
     }
+    
     if (!state.schools.length) {
       if (hasSearchUI()) {
         renderError("学校データが見つかりません。");
@@ -469,17 +540,20 @@ async function loadSchools() {
       renderTopRanking();
       return;
     }
+    
     loadComparisonList();
     updateComparisonBadge();
     updateTotalSchools();
     renderWardGrid();
     renderTopRanking();
+    
     if (hasSearchUI()) {
       populateScoreOptions();
       applyQueryParams();
       updateResults();
     }
   } catch (error) {
+    console.error(error);
     state.schools = [];
     state.regions = [];
     if (hasSearchUI()) {
@@ -487,9 +561,12 @@ async function loadSchools() {
       renderRegionFilter([]);
       renderError("学校データを読み込めませんでした。");
     }
+    showToast("データの読み込みに失敗しました", "error");
     updateTotalSchools();
     renderWardGrid();
     renderTopRanking();
+  } finally {
+    hideLoading();
   }
 }
 
@@ -509,7 +586,10 @@ function updateWardFilterFromCheckboxes() {
 
 function updateResults() {
   const ward = elements.wardFilter.value;
-  const keyword = normalizeText(elements.keywordFilter.value);
+  const rawKeyword = elements.keywordFilter.value;
+  // Split keywords by spaces (full/half width)
+  const keywords = normalizeText(rawKeyword).split(/[\s　]+/).filter(Boolean);
+  
   const sortMode = elements.sortSelect.value;
   const rawMin = parseFilterNumber(elements.scoreMinFilter.value);
   const rawMax = parseFilterNumber(elements.scoreMaxFilter.value);
@@ -548,10 +628,14 @@ function updateResults() {
       if (!selectedGenders.includes(school.gender)) return false;
     } else if (gender && school.gender !== gender) return false;
     
-    // 高校名フィルター
-    if (keyword && !normalizeText(school.name).includes(keyword)) return false;
+    // Keyword filter (AND search)
+    if (keywords.length > 0) {
+      const normalizedName = normalizeText(school.name);
+      const isMatch = keywords.every(k => normalizedName.includes(k));
+      if (!isMatch) return false;
+    }
     
-    // 偏差値範囲フィルター
+    // Score Range
     if (scoreMin != null || scoreMax != null) {
       if (!Number.isFinite(school.advScore)) return false;
       if (scoreMin != null && school.advScore < scoreMin) return false;
@@ -624,7 +708,7 @@ function createCard(school) {
     : "";
   const destinationText = formatDestinationSummary(school.destinations);
   const isInComparison = state.comparisonList.some((s) => s.slug === school.slug);
-  const maxComparison = 5;
+  const maxComparison = CONFIG.maxComparison;
 
   card.innerHTML = `
     <div class="card-header">
@@ -713,11 +797,14 @@ function toggleComparison(school) {
   const index = state.comparisonList.findIndex((s) => s.slug === school.slug);
   if (index >= 0) {
     state.comparisonList.splice(index, 1);
+    showToast(`${school.name}を比較から削除しました`, "success");
   } else {
-    if (state.comparisonList.length >= 5) {
+    if (state.comparisonList.length >= CONFIG.maxComparison) {
+      showToast(`比較できるのは最大${CONFIG.maxComparison}校までです`, "error");
       return;
     }
     state.comparisonList.push(school);
+    showToast(`${school.name}を比較に追加しました`, "success");
   }
   saveComparisonList();
   updateComparisonBadge();
