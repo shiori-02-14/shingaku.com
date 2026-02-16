@@ -152,6 +152,10 @@ function createRankCard(school, rank) {
   const detailHref = school.slug
     ? `school.html?slug=${encodeURIComponent(school.slug)}`
     : "";
+
+  // 1位〜3位には特別なクラスを付与
+  const rankClass = rank <= 3 ? `rank-badge rank-${rank}` : "rank-badge";
+
   const card = document.createElement(detailHref ? "a" : "article");
   card.className = "rank-card";
   if (detailHref) {
@@ -159,20 +163,42 @@ function createRankCard(school, rank) {
     card.setAttribute("aria-label", `${school.name}の詳細を見る`);
   }
 
+  const destinationText = formatDestinationSummary(school.destinations);
+
   card.innerHTML = `
-    <div class="rank-badge">${rank}</div>
+    <div class="${rankClass}">${rank}</div>
     <div class="rank-info">
-      <h3 class="school-name">${escapeHtml(school.name)}</h3>
-      <div class="rank-meta-row">
+      <div class="rank-header">
+        <h3 class="school-name">${escapeHtml(school.name)}</h3>
         <div class="rank-meta">
-          <span>${escapeHtml(school.ward)}</span>
-          <span>${escapeHtml(school.type)}</span>
-          <span>${escapeHtml(school.gender)}</span>
+          <span class="badge badge-ward">${escapeHtml(school.ward)}</span>
+          <span class="badge badge-type">${escapeHtml(school.type)}</span>
+          <span class="badge badge-gender">${escapeHtml(school.gender)}</span>
         </div>
-        <div class="score">
+      </div>
+      
+      <div class="rank-content">
+        <div class="rank-score-container">
           <div class="score-value">${formatScore(school.advScore)}</div>
           <div class="score-label">進学偏差値</div>
         </div>
+        
+        <div class="tier-visual">
+          <div class="tier-bar">
+            <span class="tier-ss" style="width:${safeWidth(school.tiers.ss)}%"></span>
+            <span class="tier-s" style="width:${safeWidth(school.tiers.s)}%"></span>
+            <span class="tier-a" style="width:${safeWidth(school.tiers.a)}%"></span>
+            <span class="tier-b" style="width:${safeWidth(school.tiers.b)}%"></span>
+            <span class="tier-c" style="width:${safeWidth(school.tiers.c)}%"></span>
+            <span class="tier-d" style="width:${safeWidth(school.tiers.d)}%"></span>
+            <span class="tier-e" style="width:${safeWidth(school.tiers.e)}%"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="destination">
+        <strong class="destination-label">主な合格先:</strong>
+        <span class="destination-summary">${destinationText}</span>
       </div>
     </div>
   `;
@@ -196,6 +222,36 @@ function compareScore(a, b) {
 
 function formatScore(value) {
   return value == null ? "-" : value.toFixed(1);
+}
+
+function formatPercent(value) {
+  return Number.isFinite(value) ? value.toFixed(0) : "0";
+}
+
+function safeWidth(value) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, value));
+}
+
+function formatCount(value) {
+  return Number.isFinite(value) ? Math.round(value) : 0;
+}
+
+function formatDestinationSummary(destinations) {
+  if (!destinations || !destinations.length) {
+    return "-";
+  }
+  // 合格者数でソートしてTOP5まで表示
+  const sorted = [...destinations].sort((a, b) => (b.count || 0) - (a.count || 0));
+  const topFive = sorted.slice(0, 5);
+  const summary = topFive
+    .map((item) => `${escapeHtml(item.name)} ${formatCount(item.count)}名`)
+    .join(" / ");
+
+  if (sorted.length > 5) {
+    return `${summary} / etc...`;
+  }
+  return summary;
 }
 
 function escapeHtml(value) {

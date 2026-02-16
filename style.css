@@ -2291,147 +2291,318 @@ h1 {
   }
 }
 
+/* Ranking Card - Default (Horizontal / Compact) */
+.ranking-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  /* Scrollbar space */
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* IE/Edge */
+}
+
+.ranking-list::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
 .rank-card {
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
   gap: 8px;
+  padding: 12px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
-  padding: 8px 10px;
-  box-shadow: var(--shadow-soft);
-  transition: all 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow-sm);
+  /* Restore horizontal list properties */
   width: 180px;
+  min-width: 180px;
   flex-shrink: 0;
-}
-
-.rank-card[href] {
-  cursor: pointer;
-}
-
-.rank-card:focus-visible {
-  outline: 2px solid #c6d3ea;
-  outline-offset: 1px;
 }
 
 .rank-card:hover {
-  box-shadow: 0 4px 12px rgba(31, 41, 51, 0.1);
-  border-color: #c6d3ea;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--color-accent-soft);
 }
 
+/* Vertical / Wide Layout (for ward-ranking.html) */
+.ranking-list.vertical-layout {
+  flex-direction: column;
+  overflow-x: visible;
+}
+
+.ranking-list.vertical-layout .rank-card {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  align-items: flex-start;
+}
+
+/* Rank Badge */
 .rank-badge {
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  border-radius: 6px;
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-soft) 100%);
-  color: #ffffff;
-  font-weight: 700;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  box-shadow: 0 1px 4px rgba(27, 79, 156, 0.2);
-  flex-shrink: 0;
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  /* Slightly smaller for compact */
+  color: var(--color-muted);
+  width: 32px;
+  height: 32px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+/* Larger badge for vertical layout */
+.ranking-list.vertical-layout .rank-badge {
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
+  border-radius: 12px;
+}
+
+.rank-badge.rank-1,
+.rank-badge.rank-2,
+.rank-badge.rank-3 {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.ranking-list.vertical-layout .rank-badge.rank-1,
+.ranking-list.vertical-layout .rank-badge.rank-2,
+.ranking-list.vertical-layout .rank-badge.rank-3 {
+  font-size: 24px;
 }
 
 .rank-badge.rank-1 {
-  background: linear-gradient(135deg, #ffd700 0%, #ffb800 100%);
-  color: #5a4800;
+  background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+  box-shadow: 0 4px 6px -1px rgba(253, 185, 49, 0.3);
 }
 
 .rank-badge.rank-2 {
-  background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
-  color: #404040;
+  background: linear-gradient(135deg, #E0E0E0 0%, #BDBDBD 100%);
+  box-shadow: 0 4px 6px -1px rgba(189, 189, 189, 0.3);
 }
 
 .rank-badge.rank-3 {
-  background: linear-gradient(135deg, #cd7f32 0%, #a66028 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #CD7F32 0%, #A0522D 100%);
+  box-shadow: 0 4px 6px -1px rgba(160, 82, 45, 0.3);
 }
 
 .rank-info {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  flex: 1;
+  gap: 8px;
   min-width: 0;
 }
 
+/* Header layout variations */
+.rank-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ranking-list.vertical-layout .rank-header {
+  gap: 8px;
+}
+
+@media (min-width: 640px) {
+  .ranking-list.vertical-layout .rank-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
 .rank-card .school-name {
-  font-size: 11px;
-  font-weight: 600;
   margin: 0;
-  line-height: 1.3;
-  color: #1f2933;
+  font-size: 14px;
+  /* Smaller for compact */
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-accent-dark);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.rank-score {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--color-accent);
-  line-height: 1.2;
+.ranking-list.vertical-layout .rank-card .school-name {
+  font-size: 18px;
+  white-space: normal;
 }
 
-@media (hover: hover) {
-  .rank-card:hover .school-name {
-    color: var(--color-accent);
-  }
+.rank-card:hover .school-name {
+  color: var(--color-accent);
+  text-decoration-line: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
 }
 
 .rank-meta {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   flex-wrap: wrap;
+}
+
+.ranking-list.vertical-layout .rank-meta {
+  gap: 6px;
+}
+
+/* Badges specifically for ranking cards */
+.rank-meta .badge {
+  font-size: 10px;
+  padding: 2px 6px;
+}
+
+/* Rank Content (Score + Tier) */
+.rank-content {
+  display: flex;
+  align-items: flex-end;
+  /* Horizontal align bottom */
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ranking-list.vertical-layout .rank-content {
   align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
 }
 
-.rank-meta span {
-  display: inline-block;
-  padding: 4px 9px;
-  background: var(--color-surface-muted);
-  color: var(--color-text);
-  font-size: 12px;
-  font-weight: 600;
-  border-radius: 6px;
-  border: 1px solid var(--color-border-soft);
-}
-
-.rank-card .score {
-  margin-left: 0;
-  padding: 6px 10px;
-  border-radius: 14px;
-  background: #f2f6ff;
-  border: 1px solid #d6e0f2;
-  min-width: 86px;
-  width: auto;
-  justify-self: end;
+.rank-score-container {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.ranking-list.vertical-layout .rank-score-container {
   align-items: center;
-  gap: 4px;
-  text-align: center;
+  min-width: 70px;
+  padding-right: 16px;
+  border-right: 1px solid var(--color-border-soft);
 }
 
-.rank-card .score-value {
-  font-size: 24px;
-  font-weight: 700;
+.score-value {
+  font-size: 18px;
+  font-weight: 800;
   color: var(--color-accent);
-  line-height: 1.2;
-  font-variant-numeric: tabular-nums;
+  font-family: "Outfit", sans-serif;
+  line-height: 1;
 }
 
-.rank-card .score-label {
-  font-size: 10px;
-  color: #7a879a;
-  margin-top: 0;
-  letter-spacing: 0.2px;
+.ranking-list.vertical-layout .score-value {
+  font-size: 24px;
+}
+
+.score-label {
+  font-size: 9px;
+  color: var(--color-muted);
   font-weight: 600;
+  margin-top: 2px;
+}
+
+/* Hide Tier/Destination in Compact Mode (default) */
+.tier-visual,
+.destination {
+  display: none;
+}
+
+/* Show Tier/Destination in Vertical Mode */
+.ranking-list.vertical-layout .tier-visual {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ranking-list.vertical-layout .destination {
+  display: block;
+  font-size: 12px;
+  color: var(--color-text);
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  line-height: 1.5;
+}
+
+.tier-bar {
+  display: flex;
+  height: 8px;
+  width: 100%;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #f1f5f9;
+}
+
+/* Tier Colors (Same as app.js logic) */
+.tier-ss {
+  background-color: #ef4444;
+}
+
+.tier-s {
+  background-color: #f97316;
+}
+
+.tier-a {
+  background-color: #eab308;
+}
+
+.tier-b {
+  background-color: #84cc16;
+}
+
+.tier-c {
+  background-color: #06b6d4;
+}
+
+.tier-d {
+  background-color: #3b82f6;
+}
+
+.tier-e {
+  background-color: #64748b;
+}
+
+.destination-label {
+  color: var(--color-muted);
+  margin-right: 4px;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .ranking-list.vertical-layout .rank-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ranking-list.vertical-layout .rank-score-container {
+    padding-right: 0;
+    border-right: none;
+    flex-direction: row;
+    gap: 8px;
+    align-items: baseline;
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .ranking-list.vertical-layout .score-value {
+    font-size: 20px;
+  }
 }
 
 .detail-hero {
@@ -3662,6 +3833,7 @@ h1 {
     padding: var(--spacing-lg);
   }
 }
+
 /* Loading Overlay */
 .loading-overlay {
   position: fixed;
@@ -3693,7 +3865,9 @@ h1 {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Toast Notification */
